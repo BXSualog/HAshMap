@@ -1,0 +1,44 @@
+body{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: orange;
+}
+#logo{
+    font-size: 50px;
+}
+header{
+    background: black;
+    padding: 10px 5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+li{
+    display: inline-block;
+}
+button{
+    padding: 1em;
+    width: 8em;
+    height: inherit;
+    background-color: black;
+    color: white;
+    border: none;
+    transition: transform 0.3s ease;
+        font-family: "Oswald";
+}
+button:hover{
+    background-color: rgb(68, 68, 68);
+    transform: scale(1.06);
+}
+.MeetingHeader{
+    background-color: orangered;
+    padding: 3.5em;
+}
+h1{
+    font-family: "Rockwell";
+    font-size: 200px;
+    text-align: center;
+    margin-top: 1dvi;
+    margin-left: 0;
+}
