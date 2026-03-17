@@ -10,6 +10,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400..900&family=Domine:wght@400..700&family=Oswald:wght@200..700&family=Zilla+Slab:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="slogan-bar" id="sloganBar">
+        <span class="slogan-brand">ALISTO</span>
+        <span class="slogan-divider">—</span>
+        <span class="slogan-tagline">ISA, DALAWA, TATLO – PANALO!</span>
+    </div>
     <header>
         <i class="fa-brands fa-ns8" id="logo"></i>
         <nav>
@@ -22,7 +27,7 @@
         </nav>
     </header>
     <section class="MeetingHeader">
-            <h1><i>UNTITLED</i></h1>
+            <h1>ALIS<span>TO</span></h1>
             <h2>Buhay Ingatan, Para sa Masaganang <span class="highlight">Kinabukasan</span>.</h2>
     </section>
    <section class="sub">
@@ -39,5 +44,20 @@
             <p>Average death caused by<br>Disasters per year</p>
         </div>
    </section>
+    <script>
+        const sloganBar = document.getElementById('sloganBar');
+        
+        function handleScroll() {
+            if (window.scrollY === 0) {
+                sloganBar.classList.add('active');
+            } else {
+                sloganBar.classList.remove('active');
+            }
+        }
+
+        window.addEventListener('scroll', handleScroll);
+        // Initial check
+        handleScroll();
+    </script>
 </body>
 </html>
