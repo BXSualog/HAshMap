@@ -1,74 +1,300 @@
-body{
+@import url('https://fonts.googleapis.com/css2?family=Domine:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-red: #e15b5b;
+    --primary-red-hover: #c94b4b;
+    --text-main: #2d2d31;
+    --text-muted: #515154;
+    --bg-page: #f8f9fa;
+    --bg-card: #ffffff;
+    --glass-nav: rgba(255, 255, 255, 0.9);
+}
+
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
-#logo{
-    font-size: 50px;
+
+body {
+    /* Using Outfit as a very clean, premium modern geometric sans-serif for UI text */
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-main);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
-header{
-    background: rgb(255, 255, 255);
-    padding: 10px 5%;
+
+/* Header & Glassmorphism Navigation */
+header {
+    background: var(--glass-nav);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 1rem 5%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 10px solid rgb(136, 5, 5);
     position: sticky;
-    backdrop-filter: blur(5px);
-}
-li{
-    display: inline-block;
-}
-button{
-    padding: 0.4em;
-    width: 8em;
-    height: inherit;
-    background-color: rgb(255, 255, 255);
-    font-size: 15px;
-    color: rgb(0, 0, 0);
-    border: none;
-    transition: transform 0.3s ease;
-        font-family:'Arial Narrow Bold', sans-serif;
-}
-button:hover{
-    color: orangered;
-    transform: scale(1.06);
-}
-.MeetingHeader{
-    background-image: url(Pictures/duotone.png);
-    background-repeat: no-repeat;
-    background-position: center;
-    background-attachment: fixed;
-    background-size: cover;
-    padding: 3.5em;
-    height: 665px;
-    text-align: center;
-    position: relative;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
+    transition: all 0.3s ease;
 }
 
-.MeetingHeader h1{
-    font-family: "Rockwell";
-    font-size: 200px;
-    position:static;
-    margin: 0;
-    margin-top: 100px;
+#logo {
+    font-size: 2.2rem;
+    color: var(--primary-red);
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-.MeetingHeader h2{
-    margin-top: -10px;
+
+#logo:hover {
+    transform: scale(1.1) rotate(5deg);
 }
-.sub{
-    background-color: white;
+
+nav ul {
+    list-style: none;
     display: flex;
-    padding: 5em;
+    gap: 2rem;
+    align-items: center;
 }
-.subs{
-    margin: auto;
-    background-color: whitesmoke;
-    padding: 5em;
-    width: 15em;
-    text-align:center;
-    border: 1px solid rgb(217, 169, 169);
+
+nav li button {
+    background: none;
+    border: none;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+    font-size: 1.05rem;
+    color: var(--text-main);
+    cursor: pointer;
+    position: relative;
+    padding: 0.5rem 0.2rem;
+    transition: color 0.3s ease;
+}
+
+nav li button::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    background-color: var(--primary-red);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform: translateX(-50%);
+}
+
+nav li button:hover {
+    color: var(--primary-red);
+}
+
+nav li button:hover::after {
+    width: 100%;
+}
+
+/* Hero Section */
+.MeetingHeader {
+    position: relative;
+    background: linear-gradient(to bottom, rgba(15, 15, 20, 0.3), rgba(15, 15, 20, 0.8)), url('Pictures/duotone.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 75vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 2rem;
+}
+
+.MeetingHeader::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 180px;
+    background: linear-gradient(to bottom, transparent, var(--bg-page));
+    pointer-events: none;
+}
+
+.MeetingHeader h1 {
+    /* Playfair Display for an elegant, cinematic serif headline */
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.5rem, 8vw, 6.5rem);
+    font-style: italic;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+    text-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    animation: fadeDown 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.MeetingHeader h2 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    font-size: clamp(1.2rem, 3vw, 2.2rem);
+    color: rgba(255, 255, 255, 0.95);
+    max-width: 800px;
+    letter-spacing: 0.01em;
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    animation: fadeUp 1s ease-out 0.3s both;
+}
+
+.highlight {
+    background: linear-gradient(135deg, #f29040, #ea5a5a);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 600;
+}
+
+/* Statistics section matching user target image */
+.sub {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2.5rem;
+    padding: 4rem 2rem 8rem;
+    max-width: 1250px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+}
+
+.subs {
+    background-color: var(--bg-card);
+    width: 330px;
+    min-height: 290px;
+    padding: 3.5rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
     border-radius: 20px;
-    box-shadow:  4px 10px 4px rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    border-bottom: 5px solid rgb(209, 83, 83);
+    
+    box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.03),
+        0 8px 10px rgba(0, 0, 0, 0.02),
+        inset 0 0 0 1px rgba(255, 255, 255, 1);
+        
+    position: relative;
+    border-bottom: 5px solid #df6868;
+    
+    /* Start smaller — no fade, just scaled down */
+    transform: scale(0.88);
+    transition: transform 0.5s cubic-bezier(0.22, 1.2, 0.36, 1),
+                box-shadow 0.5s ease,
+                border-color 0.3s ease;
+    cursor: default;
+    overflow: hidden;
+}
+
+/* Rising liquid fill layer */
+.subs::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    background: linear-gradient(to top, #c94b4b, #e15b5b);
+    border-radius: inherit;
+    transition: height 0.55s cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.subs:nth-child(1) { animation-delay: 0.2s; }
+.subs:nth-child(2) { animation-delay: 0.35s; }
+.subs:nth-child(3) { animation-delay: 0.5s; }
+
+/* Grow + tilt on hover */
+.subs:hover {
+    animation: none;
+    transform: scale(1.06) rotate(-5deg);
+    box-shadow: 
+        0 30px 50px -10px rgba(0, 0, 0, 0.14),
+        0 15px 25px -10px rgba(0, 0, 0, 0.08),
+        0 20px 40px -10px rgba(193, 66, 66, 0.45);
+    border-bottom-color: #c94b4b;
+}
+
+.subs:hover::before {
+    height: 110%; /* Fill past the border */
+}
+
+.subs h3 {
+    font-family: 'Domine', serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #111111;
+    margin-bottom: 1.2rem;
+    letter-spacing: -0.01em;
+    position: relative;
+    z-index: 1;
+    transition: color 0.35s ease, transform 0.4s ease;
+}
+
+.subs p {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+    transition: color 0.35s ease;
+}
+
+/* White text when liquid fills the card */
+.subs:hover h3 {
+    color: #ffffff;
+    transform: scale(1.03);
+}
+
+.subs:hover p {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Animations */
+@keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-30px); filter: blur(4px); }
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Dedicated card animation: ends at scale(0.88) so the small resting size is preserved */
+@keyframes cardFadeUp {
+    from { opacity: 0; transform: translateY(50px) scale(0.88); }
+    to   { opacity: 1; transform: translateY(0)   scale(0.88); }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+    }
+    .subs {
+        width: 100%;
+        max-width: 400px;
+        min-height: 250px;
+    }
 }
