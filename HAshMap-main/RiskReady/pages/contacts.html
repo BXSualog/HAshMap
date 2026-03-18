@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacts – Alisto</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400..900&family=Domine:wght@400..700&family=Oswald:wght@200..700&family=Zilla+Slab:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="slogan-bar" id="sloganBar">
+        <span class="slogan-brand">ALISTO</span>
+        <span class="slogan-divider">-</span>
+        <span class="slogan-tagline">ISA, DALAWA, TATLO - PANALO!</span>
+    </div>
+    <header>
+        <a href="../WelcomeInterFace.html" style="text-decoration:none;"><i class="fa-brands fa-ns8" id="logo"></i></a>
+        <nav>
+            <ul>
+                <li><a href="../WelcomeInterFace.html" style="text-decoration:none;"><button>Home</button></a></li>
+                <li class="has-dropdown">
+                    <button class="dropdown-toggle">Info <i class="fa-solid fa-chevron-down dropdown-chevron"></i></button>
+                    <div class="dropdown-menu">
+                        <a href="disasters.html" class="dropdown-item">
+                            <span class="dropdown-item-icon"><i class="fa-solid fa-house-tsunami"></i></span>
+                            <span class="dropdown-item-text">
+                                <span class="dropdown-item-title">Disasters</span>
+                                <span class="dropdown-item-desc">Types &amp; historical events</span>
+                            </span>
+                        </a>
+                        <a href="preparedness.html" class="dropdown-item">
+                            <span class="dropdown-item-icon"><i class="fa-solid fa-shield-halved"></i></span>
+                            <span class="dropdown-item-text">
+                                <span class="dropdown-item-title">Preparedness</span>
+                                <span class="dropdown-item-desc">Kits, plans &amp; early action</span>
+                            </span>
+                        </a>
+                        <a href="recovery.html" class="dropdown-item">
+                            <span class="dropdown-item-icon"><i class="fa-solid fa-rotate-right"></i></span>
+                            <span class="dropdown-item-text">
+                                <span class="dropdown-item-title">Recovery</span>
+                                <span class="dropdown-item-desc">Rebuilding after a disaster</span>
+                            </span>
+                        </a>
+                    </div>
+                </li>
+                <li><button>Contacts</button></li>
+                <li><button>About</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="page-hero" style="background: linear-gradient(to bottom, rgba(12,12,16,0.35), rgba(12,12,16,0.82)), url('try.jpg') center/cover fixed;">
+        <p class="page-hero-eyebrow">Contacts</p>
+        <h1>CON<span>TACTS</span></h1>
+        <p class="page-hero-sub">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque volutpat nibh ut lorem faucibus, at facilisis neque viverra pellentesque.</p>
+    </section>
+    <div id="page-content">
+         <p class="section-eyebrow">Who to call</p>
+         <h2 class="section-title">National Emergency <span class="highlight">Hotline</span></h2>
+         <div class="two-col-text">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor.</p>
+            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum et quasi architecto.</p>
+        </div>
+        
+        <p class="section-eyebrow">Emergency Hotlines</p>
+        
+        <div class="info-grid">
+            <div class="info-card">
+                    <span class="info-card-tag">General</span>
+                    <h3>National Emergency Hotline</h3>
+                    <p><a href="tel:911">911</a></p>
+                    <div class="info-card-accent"></div>
+            </div>
+            <div class="info-card">
+                    <span class="info-card-tag">Medical???</span>
+                    <h3>Red Cross Philippines</h3>
+                    <p><a href="tel:143">143 (Emergency Hotline)</a></br>
+                    <a href="tel:0287902300">(+63 2) 8790-2300 (Trunkline)</a></p>
+                    <div class="info-card-accent"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="../main.js"></script>
+</body>
+</html>
