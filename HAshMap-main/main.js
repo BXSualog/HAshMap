@@ -32,3 +32,34 @@ if (hasDropdown) {
         e.stopPropagation();
     });
 }
+
+/* active link indicator */
+document.addEventListener('DOMContentLoaded', () => {
+    const currentUrl = window.location.href;
+    let isDropdownActive = false;
+
+    // Check dropdown items
+    document.querySelectorAll('.dropdown-item').forEach(link => {
+        if (link.getAttribute('href') && currentUrl.includes(link.getAttribute('href'))) {
+            link.classList.add('active');
+            isDropdownActive = true;
+        }
+    });
+
+    if (isDropdownActive) {
+        const toggleBtn = document.querySelector('.dropdown-toggle');
+        if (toggleBtn) {
+            toggleBtn.classList.add('active');
+        }
+    } else {
+        // Check home link
+        if (currentUrl.includes('WelcomeInterFace.html') || currentUrl.endsWith('/') || currentUrl.endsWith('#')) {
+            const homeBtns = document.querySelectorAll('nav ul li a button');
+            homeBtns.forEach(btn => {
+                if (btn.textContent.trim() === 'Home') {
+                    btn.classList.add('active');
+                }
+            });
+        }
+    }
+});
