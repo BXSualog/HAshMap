@@ -1211,6 +1211,24 @@ nav li button.active::after {
         transform: translate(-50%, -50%) scale(1.15);
     }
 
+.footer {
+  opacity: 0;
+  height: 300px;
+  transform: translateY(100%);
+  transition: all 0.5s ease;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  padding: 20px;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+}
+
+.footer.show {
+  opacity: 1;
+  transform: translateY(0);
+}
     .prep-step {
         margin-bottom: 5rem;
     }
