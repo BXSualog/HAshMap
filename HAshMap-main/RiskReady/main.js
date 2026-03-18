@@ -13,6 +13,20 @@ if (sloganBar) {
     handleScroll();
 }
 
+const footer = document.getElementById('footer');
+
+if (footer) {
+    function Stuff() {
+        if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 50) {
+            footer.classList.add('show');
+        } else {
+            footer.classList.remove('show');
+        }
+    }
+
+    window.addEventListener('scroll', Stuff);
+    Stuff();
+}
 /* for dropdown menus */
 const hasDropdown = document.querySelector('.has-dropdown');
 
