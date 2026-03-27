@@ -1,23 +1,13 @@
 // services/geminiService.ts
+import Constants from 'expo-constants';
 import { WeatherData, TyphoonAlert } from '../types';
 
-import { GoogleGenAI } from '@google/genai';
-import { EXPO_PUBLIC_GEMINI_API_KEY } from '@env';
+const GEMINI_ENDPOINT =
+  'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
-// Polyfill AbortSignal.timeout for React Native environment
-const globalAny = global as any;
-if (!globalAny.AbortSignal) {
-  globalAny.AbortSignal = function() {};
+function getApiKey(): string {
+  return (Constants.expoConfig?.extra?.geminiApiKey as string) || '';
 }
-if (!globalAny.AbortSignal.timeout) {
-  globalAny.AbortSignal.timeout = function () {
-    const controller = new AbortController();
-    return controller.signal;
-  };
-}
-
-const GEMINI_API_KEY = EXPO_PUBLIC_GEMINI_API_KEY || '';
-const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
 function buildWeatherContext(weather: WeatherData | null, alert: TyphoonAlert | null): string {
   if (!weather) return 'No current weather data available.';
@@ -58,25 +48,51 @@ export async function sendGeminiMessage(
   alert: TyphoonAlert | null,
   history: ChatMessage[] = []
 ): Promise<string> {
+  const apiKey = getApiKey();
+  if (!apiKey) throw new Error('Gemini API key not configured');
+
   const weatherContext = buildWeatherContext(weather, alert);
-  const systemInst = `${SYSTEM_PROMPT}\n\nREAL-TIME WEATHER DATA:\n${weatherContext}`;
+
+  const systemInstruction = `${SYSTEM_PROMPT}\n\nREAL-TIME WEATHER DATA:\n${weatherContext}`;
+
   const historyToSend = history.slice(-10); // Keep last 10 messages for context
 
-  const response = await ai.models.generateContent({
-    model: 'gemini-1.5-flash',
+  const requestBody = {
+    system_instruction: {
+      parts: [{ text: systemInstruction }],
+    },
     contents: [
       ...historyToSend,
-      { role: 'user', parts: [{ text: userMessage }] }
+      {
+        role: 'user',
+        parts: [{ text: userMessage }],
+      },
     ],
-    config: {
-      systemInstruction: systemInst,
+    generationConfig: {
       temperature: 0.7,
       maxOutputTokens: 512,
       topP: 0.95,
-    }
+    },
+    safetySettings: [
+      { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+      { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+    ],
+  };
+
+  const response = await fetch(`${GEMINI_ENDPOINT}?key=${apiKey}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(requestBody),
   });
 
-  const text = response.text;
+  if (!response.ok) {
+    const errorData = await response.text();
+    throw new Error(`Gemini API error ${response.status}: ${errorData}`);
+  }
+
+  const data = await response.json();
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
   if (!text) throw new Error('No response from Gemini');
 
   return text.trim();

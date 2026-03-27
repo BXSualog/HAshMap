@@ -55,7 +55,7 @@ export function useGemini() {
         updateLastChatMessage({ content: reply, isLoading: false });
       } catch (error: any) {
         updateLastChatMessage({
-          content: `⚠️ Error: ${error.message}. Please try again.`,
+          content: '⚠️ Sorry, I encountered an error. Please check your internet connection and try again.',
           isLoading: false,
         });
       } finally {

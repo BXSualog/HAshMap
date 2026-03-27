@@ -1,31 +1,25 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState, useRef } from 'react';
+<<<<<<< HEAD
+import { StyleSheet, Text, View } from 'react-native';
+
+export default function App() {
+  return (
+    <View style={styles.container}>
+      <Text>Open up App.tsx to start working on your app!</Text>
+      <StatusBar style="auto" />
+    </View>
+=======
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
-import { GoogleGenAI } from '@google/genai';
 
-
-// Polyfill AbortSignal.timeout for React Native environment
-const globalAny = global as any;
-if (!globalAny.AbortSignal) {
-  globalAny.AbortSignal = function () { };
-}
-if (!globalAny.AbortSignal.timeout) {
-  globalAny.AbortSignal.timeout = function () {
-    const controller = new AbortController();
-    return controller.signal;
-  };
-}
-
-const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
-const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
-
+const GEMINI_API_KEY = 'AIzaSyAD_yu0QgK3Fg25tlGTrF9ku8O4Z5SG8B0';
+// Changed to Open-Meteo which does not require an API key!
 
 export default function App() {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<{ role: 'user' | 'ai', content: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentWeather, setCurrentWeather] = useState<any>(null);
-  const scrollViewRef = useRef<ScrollView>(null);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -61,7 +55,7 @@ export default function App() {
             const temp = Math.round(weatherData.current.temperature_2m);
             const wCode = weatherData.current.weather_code;
 
-
+            // Simple WMO Code mapper
             let condition = 'Clear';
             if (wCode >= 1 && wCode <= 3) condition = 'Cloudy';
             if (wCode >= 45 && wCode <= 48) condition = 'Foggy';
@@ -98,12 +92,24 @@ export default function App() {
     }
 
     try {
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: userMessage + promptAddition,
-      });
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: userMessage + promptAddition }] }]
+          })
+        }
+      );
 
-      const aiText = response.text || "No response generated.";
+      const data = await response.json();
+
+      if (data.error) {
+        throw new Error(data.error.message || 'Error from Gemini API');
+      }
+
+      const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated.";
 
       setMessages(prev => [...prev, { role: 'ai', content: aiText }]);
     } catch (error: any) {
@@ -122,12 +128,7 @@ export default function App() {
         <Text style={styles.headerTitle}>Alisto AI</Text>
       </View>
 
-      <ScrollView
-        ref={scrollViewRef}
-        style={styles.chatContainer}
-        contentContainerStyle={{ padding: 16 }}
-        onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
-      >
+      <ScrollView style={styles.chatContainer} contentContainerStyle={{ padding: 16 }}>
 
         {/* API Keys Integration Display */}
         <View style={styles.apiKeysContainer}>
@@ -191,12 +192,18 @@ export default function App() {
 
       <StatusBar style="light" />
     </KeyboardAvoidingView>
+>>>>>>> f59cafc (Initial upload)
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+<<<<<<< HEAD
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+=======
     backgroundColor: '#f5f5f5',
   },
   header: {
@@ -246,11 +253,11 @@ const styles = StyleSheet.create({
   /* Premium Weather Widget */
   weatherWidget: {
     padding: 24,
-    backgroundColor: '#14294bff', // beautiful blue shade
+    backgroundColor: '#3b82f6', // beautiful blue shade
     borderRadius: 16,
     marginBottom: 20,
     alignItems: 'center',
-    shadowColor: '#14294bff',
+    shadowColor: '#3b82f6',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 10,
@@ -349,5 +356,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
+>>>>>>> f59cafc (Initial upload)
   },
 });

@@ -49,15 +49,15 @@ export const signalColors: Record<number, string> = {
 };
 
 export const conditionGradients: Record<string, string[]> = {
-  clear: ['#5451f5ff', '#00ccffff', '#ffffffff'],
-  clouds: ['#5b5b5bff', '#b1b1b1ff', '#ffffffff'],
-  rain: ['#000000', '#0a0a0a', '#111111'],
-  drizzle: ['#000000', '#0a0a0a', '#111111'],
-  thunderstorm: ['#000000', '#0a0a0a', '#111111'],
-  snow: ['#000000', '#0a0a0a', '#111111'],
-  mist: ['#000000', '#0a0a0a', '#111111'],
-  typhoon: ['#000000', '#0a0a0a', '#111111'],
-  storm: ['#000000', '#0a0a0a', '#111111'],
+  clear: ['#1a6b9a', '#f4a444', '#ff7043'],
+  clouds: ['#2c3e50', '#4a6280', '#6b8cad'],
+  rain: ['#0d1b2a', '#1a3a5c', '#2d6a8f'],
+  drizzle: ['#1a2a3a', '#2a4a6a', '#3a6a8a'],
+  thunderstorm: ['#0a0a1a', '#1a0a2a', '#2a0a3a'],
+  snow: ['#c8d8e8', '#e8f0f8', '#d0e0f0'],
+  mist: ['#3a4a5a', '#5a6a7a', '#7a8a9a'],
+  typhoon: ['#1a0a0a', '#2a0a1a', '#3a1a0a'],
+  storm: ['#0a0a1a', '#1a0a2a', '#3a0a3a'],
 };
 
 export const lightTheme = {
