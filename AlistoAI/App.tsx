@@ -4,6 +4,8 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Keyboa
 import { GoogleGenAI } from '@google/genai';
 
 
+import Constants from 'expo-constants';
+
 // Polyfill AbortSignal.timeout for React Native environment
 const globalAny = global as any;
 if (!globalAny.AbortSignal) {
@@ -16,7 +18,7 @@ if (!globalAny.AbortSignal.timeout) {
   };
 }
 
-const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
+const GEMINI_API_KEY = "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";
 const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
 
@@ -41,7 +43,6 @@ export default function App() {
     if (weatherMatch) {
       const city = weatherMatch[1].trim();
       try {
-        // Step 1: Geocoding
         const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`);
         const geoData = await geoRes.json();
 
@@ -98,16 +99,42 @@ export default function App() {
     }
 
     try {
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: userMessage + promptAddition,
+      const openRouterHistory = messages.map(msg => ({
+        role: msg.role === 'ai' ? 'assistant' : 'user',
+        content: msg.content
+      }));
+
+      const fetchMessages = [
+        ...openRouterHistory,
+        { role: 'user', content: userMessage + promptAddition }
+      ];
+
+      const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${GEMINI_API_KEY}`,
+          'HTTP-Referer': 'https://alistogo.com',
+          'X-Title': 'Alisto:Go',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.5-flash',
+          messages: fetchMessages,
+          temperature: 0.7,
+        })
       });
 
-      const aiText = response.text || "No response generated.";
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error?.message || `API Error: ${res.status}`);
+      }
+
+      const data = await res.json();
+      const aiText = data.choices?.[0]?.message?.content || "No response generated.";
 
       setMessages(prev => [...prev, { role: 'ai', content: aiText }]);
     } catch (error: any) {
-      setMessages(prev => [...prev, { role: 'ai', content: `❌ Error: ${error.message}` }]);
+      setMessages(prev => [...prev, { role: 'ai', content: `Error: ${error.message}` }]);
     } finally {
       setLoading(false);
     }
@@ -131,8 +158,13 @@ export default function App() {
 
         {/* API Keys Integration Display */}
         <View style={styles.apiKeysContainer}>
-          <Text style={styles.apiKeysTitle}>Active Integrations</Text>
-          <Text style={styles.apiKeyText}>Gemini API: {GEMINI_API_KEY ? 'Configured ✅' : 'Missing ❌'}</Text>
+          <Text style={styles.apiKeysTitle}>Active Integrations (DEBUG)</Text>
+          <Text style={styles.apiKeyText}>
+            Gemini API: {GEMINI_API_KEY ? `Loaded (${GEMINI_API_KEY.length} chars)` : 'Missing (length 0) ❌'}
+          </Text>
+          <Text style={styles.apiKeyText}>
+            Key starts with: {GEMINI_API_KEY ? GEMINI_API_KEY.substring(0, 5) + '...' : 'none'}
+          </Text>
           <Text style={styles.apiKeyText}>
             Open-Meteo API: Configured ✅ (No Key Required)
           </Text>

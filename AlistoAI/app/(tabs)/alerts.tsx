@@ -35,7 +35,7 @@ export default function AlertsScreen() {
         {currentSignal > 0 && activeAlert && (
           <View style={styles.currentSignalBanner}>
             <Text style={styles.currentSignalText}>
-              🔴 CURRENTLY ACTIVE: Signal #{currentSignal} — {activeAlert.location}
+              CURRENTLY ACTIVE: Signal #{currentSignal} — {activeAlert.location}
             </Text>
           </View>
         )}
@@ -48,10 +48,9 @@ export default function AlertsScreen() {
         >
           {alertHistory.length === 0 ? (
             <View style={styles.empty}>
-              <Text style={styles.emptyEmoji}>✅</Text>
               <Text style={styles.emptyTitle}>No Alerts Recorded</Text>
               <Text style={styles.emptyDesc}>
-                When typhoon signals are detected, they'll appear here for your reference.
+                When typhoon signals are detected, they'll appear here.
               </Text>
             </View>
           ) : (

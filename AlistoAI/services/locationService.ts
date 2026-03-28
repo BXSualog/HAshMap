@@ -16,17 +16,34 @@ export async function requestBackgroundLocationPermission(): Promise<boolean> {
 export async function getCurrentLocation(): Promise<LocationData | null> {
   try {
     const hasPermission = await requestLocationPermission();
-    if (!hasPermission) return null;
+    if (!hasPermission) return getCachedLocation();
 
-    const location = await Location.getCurrentPositionAsync({
-      accuracy: Location.Accuracy.Balanced,
-      timeInterval: 5000,
-    });
+    let coords: { latitude: number; longitude: number } | null = null;
 
-    const geocode = await reverseGeocode(location.coords.latitude, location.coords.longitude);
+    try {
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+        timeInterval: 5000,
+      });
+      coords = location.coords;
+    } catch {
+      // Location services may be disabled — try last known position
+      console.warn('Location unavailable, trying last known position...');
+      const last = await Location.getLastKnownPositionAsync();
+      if (last) {
+        coords = last.coords;
+      }
+    }
+
+    if (!coords) {
+      // Fall back to cached location
+      return getCachedLocation();
+    }
+
+    const geocode = await reverseGeocode(coords.latitude, coords.longitude);
     const locationData: LocationData = {
-      lat: location.coords.latitude,
-      lon: location.coords.longitude,
+      lat: coords.latitude,
+      lon: coords.longitude,
       city: geocode.city,
       province: geocode.province,
       country: geocode.country,
@@ -36,7 +53,7 @@ export async function getCurrentLocation(): Promise<LocationData | null> {
     await cacheLocation(locationData);
     return locationData;
   } catch (error) {
-    console.error('Location error:', error);
+    console.warn('Location error:', error);
     // Fall back to cached location
     return getCachedLocation();
   }

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="sign_up.css">
+</head>
+
+<body>
+
+    <div class="signup-wrapper">
+        <div class="signup-brand">
+            <div class="wordmark"><span class="accent">Alisto</span>AI</div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Create Account</h2>
+                <div class="card-subtitle">Join us to start managing your data.</div>
+            </div>
+
+            <form id="sign_up_form">
+                <div class="field">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="Enter your email" required>
+                </div>
+
+                <div class="field">
+                    <label for="password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" placeholder="Enter your password" required>
+                        <span class="toggle-password" data-target="password">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="eye-icon">
+                                <path class="eye-lid" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle class="eye-pupil" cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="confirm_password">Confirm Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="confirm_password" placeholder="Confirm password" required>
+                        <span class="toggle-password" data-target="confirm_password">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="eye-icon">
+                                <path class="eye-lid" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle class="eye-pupil" cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+
+                <button type="submit">Sign Up</button>
+                <p id="message"></p>
+            </form>
+
+            <div class="divider"></div>
+
+            <div class="card-footer">
+                <span>Already have an account?</span>
+                <a href="../login/login.html">Login</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="sign_up.js"></script>
+
+    <script>
+        document.querySelectorAll('.toggle-password').forEach(toggle => {
+            toggle.addEventListener('click', function () {
+                const targetId = this.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    this.classList.add('is-visible');
+                } else {
+                    input.type = 'password';
+                    this.classList.remove('is-visible');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

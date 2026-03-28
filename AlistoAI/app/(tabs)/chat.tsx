@@ -42,7 +42,7 @@ export default function ChatScreen() {
       const welcomeMsg: ChatMessage = {
         id: generateId(),
         role: 'assistant',
-        content: `👋 Hi! I'm AlistoAI, your weather assistant. I'm tracking the current conditions in **${weather.city}** — ${weather.temperature}°C, ${weather.description}. \n\nHow can I help you stay safe today?`,
+        content: `Hi! I am your Alisto:Go AI, your weather assistant. I'm tracking the current conditions in **${weather.city}** — ${weather.temperature}°C, ${weather.description}. \n\nHow can I help you stay safe today?`,
         timestamp: Date.now(),
       };
       useAppStore.getState().addChatMessage(welcomeMsg);
@@ -56,65 +56,65 @@ export default function ChatScreen() {
   return (
     <View style={styles.flex}>
       <SafeAreaView style={styles.flex} edges={['top']}>
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.headerLeft}>
-            <Text style={styles.aiAvatar}>🤖</Text>
-            <View>
-              <Text style={styles.title}>AlistoAI Assistant</Text>
-              <Text style={styles.subtitle}>
-                {weather ? `${weather.city} · ${weather.temperature}°C` : 'Weather-aware AI'}
-              </Text>
-            </View>
-          </View>
-          {chatHistory.length > 1 && (
-            <Pressable onPress={clearChat} style={styles.clearBtn}>
-              <Text style={styles.clearBtnText}>Clear</Text>
-            </Pressable>
-          )}
-        </View>
-
-        {/* Active alert chip */}
-        {activeAlert && activeAlert.signal > 0 && (
-          <View style={styles.alertChip}>
-            <Text style={styles.alertChipText}>
-              🚨 Signal #{activeAlert.signal} Active — I have full context
-            </Text>
-          </View>
-        )}
-
-        {/* Chat List */}
-        <FlatList
-          ref={flatListRef}
-          data={chatHistory}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
-          contentContainerStyle={styles.chatContent}
-          showsVerticalScrollIndicator={false}
-          ListEmptyComponent={
-            <View style={styles.emptyChat}>
-              <Text style={styles.emptyChatEmoji}>🌦️</Text>
-              <Text style={styles.emptyChatText}>Ask me anything about the weather!</Text>
-              <View style={styles.quickPrompts}>
-                {QUICK_PROMPTS.map((prompt) => (
-                  <Pressable
-                    key={prompt}
-                    style={styles.quickBtn}
-                    onPress={() => sendMessage(prompt)}
-                  >
-                    <Text style={styles.quickBtnText}>{prompt}</Text>
-                  </Pressable>
-                ))}
+        <KeyboardAvoidingView
+          style={styles.flex}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 10}
+        >
+          {/* Header */}
+          <View style={styles.header}>
+            <View style={styles.headerLeft}>
+              <View>
+                <Text style={styles.title}>Alisto:Go Assistant</Text>
+                <Text style={styles.subtitle}>
+                  {weather ? `${weather.city} · ${weather.temperature}°C` : 'Weather-aware AI'}
+                </Text>
               </View>
             </View>
-          }
-        />
+            {chatHistory.length > 1 && (
+              <Pressable onPress={clearChat} style={styles.clearBtn}>
+                <Text style={styles.clearBtnText}>Clear</Text>
+              </Pressable>
+            )}
+          </View>
 
-        {/* Input */}
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          keyboardVerticalOffset={0}
-        >
+          {/* Active alert chip */}
+          {activeAlert && activeAlert.signal > 0 && (
+            <View style={styles.alertChip}>
+              <Text style={styles.alertChipText}>
+                Signal #{activeAlert.signal} Active — I have full context
+              </Text>
+            </View>
+          )}
+
+          {/* Chat List */}
+          <FlatList
+            style={{ flex: 1 }}
+            ref={flatListRef}
+            data={chatHistory}
+            keyExtractor={(item) => item.id}
+            renderItem={renderItem}
+            contentContainerStyle={styles.chatContent}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={
+              <View style={styles.emptyChat}>
+                <Text style={styles.emptyChatText}>Ask about the weather!</Text>
+                <View style={styles.quickPrompts}>
+                  {QUICK_PROMPTS.map((prompt) => (
+                    <Pressable
+                      key={prompt}
+                      style={styles.quickBtn}
+                      onPress={() => sendMessage(prompt)}
+                    >
+                      <Text style={styles.quickBtnText}>{prompt}</Text>
+                    </Pressable>
+                  ))}
+                </View>
+              </View>
+            }
+          />
+
+          {/* Input */}
           <ChatInput onSend={sendMessage} isLoading={isChatLoading} />
         </KeyboardAvoidingView>
       </SafeAreaView>

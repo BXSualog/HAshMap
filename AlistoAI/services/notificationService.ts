@@ -135,12 +135,12 @@ export function addNotificationResponseListener(
   handler: (response: any) => void
 ) {
   const Notifications = getNotifications();
-  if (!Notifications) return { remove: () => {} };
+  if (!Notifications) return { remove: () => { } };
 
   try {
     return Notifications.addNotificationResponseReceivedListener(handler);
   } catch (err) {
-    return { remove: () => {} };
+    return { remove: () => { } };
   }
 }
 
@@ -148,12 +148,12 @@ export function addNotificationReceivedListener(
   handler: (notification: any) => void
 ) {
   const Notifications = getNotifications();
-  if (!Notifications) return { remove: () => {} };
+  if (!Notifications) return { remove: () => { } };
 
   try {
     return Notifications.addNotificationReceivedListener(handler);
   } catch (err) {
-    return { remove: () => {} };
+    return { remove: () => { } };
   }
 }
 

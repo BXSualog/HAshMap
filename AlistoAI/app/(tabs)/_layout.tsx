@@ -8,27 +8,27 @@ import { signalColors } from '../../theme/colors';
 
 export default function TabLayout() {
   const { currentSignal } = useAppStore();
-  const alertColor = currentSignal > 0 ? signalColors[currentSignal] : '#1a73e8';
+  const alertColor = currentSignal > 0 ? signalColors[currentSignal] : '#fcfcfcff';
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#0d1b2a',
-          borderTopColor: 'rgba(255,255,255,0.07)',
+          backgroundColor: '#2f2f2fff',
+          borderTopColor: 'rgba(234, 0, 0, 0.48)',
           borderTopWidth: 1,
           paddingBottom: Platform.OS === 'ios' ? 20 : 8,
           paddingTop: 8,
           height: Platform.OS === 'ios' ? 84 : 64,
           elevation: 0,
         },
-        tabBarActiveTintColor: '#60a5fa',
-        tabBarInactiveTintColor: 'rgba(255,255,255,0.3)',
+        tabBarActiveTintColor: '#ee5757ff',
+        tabBarInactiveTintColor: 'rgba(145, 143, 143, 1)',
         tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: '600',
-          marginTop: 2,
+          fontSize: 9,
+          fontWeight: '900',
+          marginTop: 0,
         },
       }}
     >

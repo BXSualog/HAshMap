@@ -49,15 +49,14 @@ export const signalColors: Record<number, string> = {
 };
 
 export const conditionGradients: Record<string, string[]> = {
-  clear: ['#5451f5ff', '#00ccffff', '#ffffffff'],
-  clouds: ['#5b5b5bff', '#b1b1b1ff', '#ffffffff'],
-  rain: ['#000000', '#0a0a0a', '#111111'],
-  drizzle: ['#000000', '#0a0a0a', '#111111'],
-  thunderstorm: ['#000000', '#0a0a0a', '#111111'],
-  snow: ['#000000', '#0a0a0a', '#111111'],
-  mist: ['#000000', '#0a0a0a', '#111111'],
-  typhoon: ['#000000', '#0a0a0a', '#111111'],
-  storm: ['#000000', '#0a0a0a', '#111111'],
+  clear: ['#5451f5ff', '#0689a9ff', '#000000ff'],
+  clouds: ['#5b5b5bff', '#b1b1b1ff', '#000000ff'],
+  rain: ['#86B9B1', '#4B7273', '#042631'],
+  drizzle: ['#C9D6DF', '#99A9B8', '#7D8CA3'],
+  thunderstorm: ['#765c96', '#5f3f4d', '#372951'],
+  mist: ['#AFB5AE', '#858971', '#3F3F3F'],
+  typhoon: ['#6486A1', '#2D79AA', '#0D1F2A'],
+  storm: ['#765c96', '#5f3f4d', '#372951'],
 };
 
 export const lightTheme = {

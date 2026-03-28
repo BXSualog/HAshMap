@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   temperature: {
     fontSize: 96,
     fontWeight: '200',
-    color: '#ffffff',
+    color: '#ffffffff',
     letterSpacing: -4,
   },
   description: {

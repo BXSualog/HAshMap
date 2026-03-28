@@ -2,8 +2,8 @@ import 'dotenv/config';
 
 export default {
   expo: {
-    name: 'AlistoAI',
-    slug: 'alistoai',
+    name: 'Alisto:Go',
+    slug: 'alisto:go',
     version: '1.0.0',
     orientation: 'portrait',
     icon: './assets/icon.png',
@@ -19,9 +19,9 @@ export default {
       bundleIdentifier: 'com.bxfiles.alistoai',
       infoPlist: {
         NSLocationWhenInUseUsageDescription:
-          'AlistoAI needs your location to provide localized typhoon alerts and weather updates.',
+          'Alisto:Go needs your location to provide localized typhoon alerts and weather updates.',
         NSLocationAlwaysAndWhenInUseUsageDescription:
-          'AlistoAI needs your location in the background to monitor weather changes and send typhoon alerts.',
+          'Alisto:Go needs your location in the background to monitor weather changes and send typhoon alerts.',
         UIBackgroundModes: ['location', 'fetch'],
       },
     },
@@ -51,7 +51,7 @@ export default {
         'expo-location',
         {
           locationAlwaysAndWhenInUsePermission:
-            'Allow AlistoAI to use your location for localized weather alerts.',
+            'Allow Alisto:Go to use your location for localized weather alerts.',
         },
       ],
       [
@@ -69,12 +69,11 @@ export default {
       typedRoutes: true,
     },
     extra: {
-      openWeatherApiKey: process.env.OPENWEATHER_API_KEY,
-      geminiApiKey: process.env.GEMINI_API_KEY,
+      geminiApiKey: process.env.EXPO_PUBLIC_GEMINI_API_KEY || process.env.GEMINI_API_KEY,
       eas: {
         projectId: 'your-eas-project-id',
       },
     },
-    scheme: 'alistoai',
+    scheme: 'alistogo',
   },
 };

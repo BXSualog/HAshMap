@@ -23,7 +23,7 @@ import WeatherCard from '../../components/WeatherCard';
 import TyphoonBanner from '../../components/TyphoonBanner';
 import ForecastRow from '../../components/ForecastRow';
 import GlassCard from '../../components/GlassCard';
-import { fontSizes } from '../../theme/typography';
+import { fontSizes, fonts } from '../../theme/typography';
 import { TYPHOON_SIGNAL_INFO } from '../../utils/constants';
 import { formatDateTime } from '../../utils/typhoonSignals';
 
@@ -111,13 +111,15 @@ export default function DashboardScreen() {
         {/* Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.appName}>AlistoAI</Text>
+            <Text style={styles.appName}>
+              Alisto:<Text style={styles.appNameHighlight}>Go</Text>
+            </Text>
             <Text style={styles.headerSub}>
               {location ? `${location.city}, ${location.province}` : 'Detecting location...'}
             </Text>
           </View>
           <Pressable onPress={() => router.push('/(tabs)/chat')} style={styles.aiBtn}>
-            <Text style={styles.aiBtnText}>🤖 Ask AI</Text>
+            <Text style={styles.aiBtnText}>Ask Alisto:Go Assistant</Text>
           </Pressable>
         </View>
 
@@ -144,7 +146,7 @@ export default function DashboardScreen() {
           {/* No active signal badge */}
           {(!activeAlert || activeAlert.signal === 0) && (
             <View style={styles.safeBadge}>
-              <Text style={styles.safeBadgeText}>✅ No Active Typhoon Signal</Text>
+              <Text style={styles.safeBadgeText}>No Active Typhoon Signal</Text>
             </View>
           )}
 
@@ -156,7 +158,7 @@ export default function DashboardScreen() {
           ) : (
             <View style={styles.loadingCard}>
               <Text style={styles.loadingText}>
-                {isWeatherLoading ? '⏳ Fetching weather...' : '📡 Pull to refresh'}
+                {isWeatherLoading ? 'Fetching weather...' : ' Please wait'}
               </Text>
             </View>
           )}
@@ -167,7 +169,7 @@ export default function DashboardScreen() {
           {/* Evacuation Tips */}
           {activeAlert && activeAlert.signal >= 3 && (
             <GlassCard style={styles.tipsCard} borderRadius={16} intensity={15}>
-              <Text style={styles.tipsTitle}>🚨 Evacuation Tips</Text>
+              <Text style={styles.tipsTitle}>Evacuation Tips</Text>
               {TYPHOON_SIGNAL_INFO[activeAlert.signal as keyof typeof TYPHOON_SIGNAL_INFO]?.tips.map(
                 (tip, i) => (
                   <Text key={i} style={styles.tip}>• {tip}</Text>
@@ -203,8 +205,12 @@ const styles = StyleSheet.create({
   appName: {
     color: '#ffffff',
     fontSize: fontSizes['2xl'],
-    fontWeight: '800',
+    fontWeight: '900',
     letterSpacing: -0.5,
+    fontFamily: fonts.serif,
+  },
+  appNameHighlight: {
+    color: '#f97316', // Vibrant orange
   },
   headerSub: {
     color: 'rgba(255,255,255,0.55)',
@@ -223,6 +229,7 @@ const styles = StyleSheet.create({
     color: '#60a5fa',
     fontSize: fontSizes.sm,
     fontWeight: '600',
+    fontFamily: fonts.serif,
   },
   scrollContent: { paddingBottom: 16 },
   safeBadge: {
@@ -233,10 +240,10 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: 'rgba(0,212,255,0.25)',
+    borderColor: 'rgba(0, 0, 0, 0.25)',
   },
   safeBadgeText: {
-    color: '#00d4ff',
+    color: '#ffffffff',
     fontSize: fontSizes.sm,
     fontWeight: '600',
   },
