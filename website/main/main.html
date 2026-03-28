@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta Tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Your description here">
+
+    <!-- Title -->
+    <title>Main</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>Welcome!</h1>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <p id="message">Not Logged In</p>
+        <p id="verificationStatus">Not Logged In</p>
+        <button id="signOut">Sign Out</button>
+        <button id="changePassword">Change Password</button>
+        <button id="deleteAccount">Delete Account</button>
+        
+        <!-- POPUPS --> 
+        <!-- Generic --> 
+        <div id="popup" class="popup">
+            <div class="popup-content">
+                <p id = "popupText">text</p>
+                <button id = "closePopup">OK</button>
+            </div>
+        </div>
+
+        <!-- Sign Out --> 
+        <div id="signOutPopup" class="popup">
+            <div class="popup-content">
+                <p id = "signOutPopupText">Sign Out?</p>
+                <button id = "confirmSignOut">Yes</button>
+                <button id = "cancelSignOut">No</button>
+            </div>
+        </div>
+
+        <!-- Change Password --> 
+        <div id="changePopup" class="popup">
+            <div class="popup-content">
+                <p id = "changePopupText">Change Password</p>
+                <form id = "changeForm">
+                    <input type="email" id="email" placeholder="Enter your email" required> <br> <br>
+                    <input type="password" id="oldPassword" placeholder="Old password" required> <br> <br>
+                    <input type="password" id="newPassword" placeholder="New password" required> <br> <br>
+                    <input type="password" id="confirmNewPassword" placeholder="Confirm New password" required> <br>
+                    <p id="changeText"> <p>
+                    <button id = "changeButton" type = "submit">Confirm</button>
+                    <button id = "cancelChange" type = "button">Cancel</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Delete Account --> 
+        <div id="deletePopup" class="popup">
+            <div class="popup-content">
+                <p id = "deletePopupText">Confirm Account Deletion</p>
+                <form id = "deleteForm">
+                    <input type="email" id="email" placeholder="Enter your email" required> <br> <br>
+                    <input type="password" id="password" placeholder="Enter your password" required> <br>
+                    <p id="deleteText"> <p>
+                    <button id = "deleteButton" type = "submit">Delete Account</button>
+                    <button id = "cancelDelete" type = "button">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script type = "module" src="main.js"></script>
+
+</body>
+</html>

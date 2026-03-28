@@ -1,6 +1,6 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCZbe904XlbayEtHD8AVk-B78AqU9HpOBs",
@@ -25,32 +25,16 @@ sign_up_form.addEventListener("submit", (event) => {
     const password = document.getElementById("password").value;
     const confirm_password = document.getElementById("confirm_password").value;
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        message.textContent = "Invalid gmail format";
-        return;
-    }
-
     if (password === confirm_password) {
         createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                return sendEmailVerification(user);
-            })
             .then(() => {
-                message.textContent = "Verification email sent! Please check your inbox. (If mail is not in inbox, check spam folder)";
-                return signOut(auth);
+                window.location.href = "../main/main.html"
             })
 
             .catch((error) => {
-                const errorCode = error.code;
-                
-                if (errorCode === 'auth/email-already-in-use') {
-                    message.textContent = "Account already exists.";
-                } else {
-                    message.textContent = error.message;
-                }
+                const errorMessage = error.message;
+                message.textContent = errorMessage;
             });
-    } else { message.textContent = "Password does not match"; }
+    } else { message.textContent = `Error: Passwords does not match`; }
 
 })
