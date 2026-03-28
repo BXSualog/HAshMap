@@ -125,7 +125,7 @@ changeForm.addEventListener("submit", (event) => {
     const user = auth.currentUser;
 
     const email = user.email;
-    const confirmEmail = document.getElementById("email").value.toLowerCase();
+    const confirmEmail = document.getElementById("changeEmail").value.toLowerCase();
     const oldPassword = document.getElementById("oldPassword").value;
     const newPassword = document.getElementById("newPassword").value;
     const confirmNewPassword = document.getElementById("confirmNewPassword").value;
@@ -162,6 +162,7 @@ changeForm.addEventListener("submit", (event) => {
 
 cancelChange.addEventListener("click", () => {
     changeForm.reset();
+    changeText.textContent = "";
     closePopup("changePopup");
 });
 
@@ -178,7 +179,7 @@ deleteForm.addEventListener("submit", (event) => {
     const user = auth.currentUser;
 
     const email = user.email;
-    const confirmEmail = document.getElementById("email").value.toLowerCase();
+    const confirmEmail = document.getElementById("deleteEmail").value.toLowerCase();
     const password = document.getElementById("password").value;
     const credential = EmailAuthProvider.credential(email, password);
 
@@ -200,5 +201,6 @@ deleteForm.addEventListener("submit", (event) => {
 });
 cancelDelete.addEventListener("click", () => {
     deleteForm.reset();
+    deleteText.textContent = "";
     closePopup("deletePopup");
 });
