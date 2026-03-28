@@ -186,7 +186,7 @@ deleteForm.addEventListener("submit", (event) => {
     {
         reauthenticateWithCredential(user, credential)
             .then(() => {
-                changeForm.reset();
+                deleteForm.reset();
                 deleteText.textContent = "Account Deleted";
                 return deleteUser(user);
             })
@@ -199,6 +199,6 @@ deleteForm.addEventListener("submit", (event) => {
     }
 });
 cancelDelete.addEventListener("click", () => {
-    changeForm.reset();
+    deleteForm.reset();
     closePopup("deletePopup");
 });
