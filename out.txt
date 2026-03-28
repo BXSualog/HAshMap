@@ -1,0 +1,36 @@
+﻿alistoai@1.0.0 C:\Users\Acer\Documents\BX Files\BX VS Code2\AlistoAI\AlistoAI
+Γö£ΓöÇΓö¼ @google/genai@1.46.0
+Γöé ΓööΓöÇΓö¼ google-auth-library@10.6.2
+Γöé   ΓööΓöÇΓö¼ gaxios@7.1.4
+Γöé     ΓööΓöÇΓö¼ node-fetch@3.3.2
+Γöé       ΓööΓöÇΓö¼ fetch-blob@3.2.0
+Γöé         ΓööΓöÇΓöÇ node-domexception@1.0.0
+Γö£ΓöÇΓö¼ expo-constants@55.0.9
+Γöé ΓööΓöÇΓö¼ @expo/config@55.0.10
+Γöé   ΓööΓöÇΓöÇ glob@13.0.6
+Γö£ΓöÇΓö¼ expo@55.0.8
+Γöé Γö£ΓöÇΓö¼ @expo/cli@55.0.18
+Γöé Γöé Γö£ΓöÇΓö¼ @react-native/dev-middleware@0.83.2
+Γöé Γöé Γöé ΓööΓöÇΓö¼ chromium-edge-launcher@0.2.0
+Γöé Γöé Γöé   ΓööΓöÇΓö¼ rimraf@3.0.2
+Γöé Γöé Γöé     ΓööΓöÇΓö¼ glob@7.2.3
+Γöé Γöé Γöé       ΓööΓöÇΓöÇ inflight@1.0.6 deduped
+Γöé Γöé ΓööΓöÇΓöÇ glob@13.0.6 deduped
+Γöé Γö£ΓöÇΓö¼ @expo/config-plugins@55.0.7
+Γöé Γöé ΓööΓöÇΓöÇ glob@13.0.6 deduped
+Γöé Γö£ΓöÇΓö¼ @expo/fingerprint@0.16.6
+Γöé Γöé ΓööΓöÇΓöÇ glob@13.0.6 deduped
+Γöé ΓööΓöÇΓö¼ @expo/metro-config@55.0.11
+Γöé   ΓööΓöÇΓöÇ glob@13.0.6 deduped
+ΓööΓöÇΓö¼ react-native@0.83.2
+  Γö£ΓöÇΓö¼ @react-native/codegen@0.83.2
+  Γöé ΓööΓöÇΓö¼ glob@7.2.3
+  Γöé   ΓööΓöÇΓöÇ inflight@1.0.6 deduped
+  Γö£ΓöÇΓö¼ babel-jest@29.7.0
+  Γöé ΓööΓöÇΓö¼ babel-plugin-istanbul@6.1.1
+  Γöé   ΓööΓöÇΓö¼ test-exclude@6.0.0
+  Γöé     ΓööΓöÇΓö¼ glob@7.2.3
+  Γöé       ΓööΓöÇΓöÇ inflight@1.0.6 deduped
+  ΓööΓöÇΓö¼ glob@7.2.3
+    ΓööΓöÇΓöÇ inflight@1.0.6
+
