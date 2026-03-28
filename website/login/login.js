@@ -49,6 +49,10 @@ loginForm.addEventListener("submit", (event) => {
 
         })
         .catch((error) => {
-            message.textContent = `Error: ${error.message}`;
+            if (error.code === 'auth/invalid-credential') {
+                message.textContent = 'Alisto account does not exist';
+            } else {
+                message.textContent = `Error: ${error.message}`;
+            }
         });
 });

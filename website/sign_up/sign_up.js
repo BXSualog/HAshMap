@@ -25,6 +25,12 @@ sign_up_form.addEventListener("submit", (event) => {
     const password = document.getElementById("password").value;
     const confirm_password = document.getElementById("confirm_password").value;
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        message.textContent = "Invalid gmail format";
+        return;
+    }
+
     if (password === confirm_password) {
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
@@ -32,15 +38,19 @@ sign_up_form.addEventListener("submit", (event) => {
                 return sendEmailVerification(user);
             })
             .then(() => {
-                message.textContent = "Verification email sent! Please check your inbox.";
+                message.textContent = "Verification email sent! Please check your inbox. (If mail is not in inbox, check spam folder)";
                 return signOut(auth);
             })
 
             .catch((error) => {
                 const errorCode = error.code;
-                const errorMessage = error.message;
-                message.textContent = errorMessage;
+                
+                if (errorCode === 'auth/email-already-in-use') {
+                    message.textContent = "Account already exists.";
+                } else {
+                    message.textContent = error.message;
+                }
             });
-    } else { message.textContent = `Error: Passwords does not match`; }
+    } else { message.textContent = "Password does not match"; }
 
 })
