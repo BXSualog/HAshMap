@@ -1,4 +1,3 @@
-// app/(tabs)/chat.tsx — AI Chat Screen
 import React, { useEffect, useRef } from 'react';
 import {
   View,
@@ -36,7 +35,6 @@ export default function ChatScreen() {
     }
   }, [chatHistory]);
 
-  // Send welcome message on first open
   useEffect(() => {
     if (chatHistory.length === 0 && weather) {
       const welcomeMsg: ChatMessage = {
