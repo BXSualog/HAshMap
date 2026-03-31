@@ -49,8 +49,8 @@ export const signalColors: Record<number, string> = {
 };
 
 export const conditionGradients: Record<string, string[]> = {
-  clear: ['#5451f5ff', '#0689a9ff', '#000000ff'],
-  clouds: ['#5b5b5bff', '#b1b1b1ff', '#000000ff'],
+  clear: ['#5451f5', '#0689a9', '#000000'],
+  clouds: ['#5b5b5b', '#b1b1b1', '#000000'],
   rain: ['#86B9B1', '#4B7273', '#042631'],
   drizzle: ['#C9D6DF', '#99A9B8', '#7D8CA3'],
   thunderstorm: ['#765c96', '#5f3f4d', '#372951'],

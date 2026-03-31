@@ -3,12 +3,14 @@ import React from 'react';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppStore } from '../../store/useAppStore';
 import { signalColors } from '../../theme/colors';
 
 export default function TabLayout() {
   const { currentSignal } = useAppStore();
   const alertColor = currentSignal > 0 ? signalColors[currentSignal] : '#fcfcfcff';
+  const insets = useSafeAreaInsets();
 
   return (
     <Tabs
@@ -18,9 +20,9 @@ export default function TabLayout() {
           backgroundColor: '#2f2f2fff',
           borderTopColor: 'rgba(234, 0, 0, 0.48)',
           borderTopWidth: 1,
-          paddingBottom: Platform.OS === 'ios' ? 20 : 8,
+          paddingBottom: Platform.OS === 'ios' ? Math.max(20, insets.bottom) : insets.bottom + 10,
           paddingTop: 8,
-          height: Platform.OS === 'ios' ? 84 : 64,
+          height: Platform.OS === 'ios' ? 84 : 64 + insets.bottom,
           elevation: 0,
         },
         tabBarActiveTintColor: '#ee5757ff',

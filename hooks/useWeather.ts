@@ -2,11 +2,13 @@
 import { useCallback } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { fetchCurrentWeather, fetchForecast } from '../services/weatherService';
-import { cacheWeatherData, getCachedWeather } from '../services/storageService';
-import { detectTyphoonSignal } from '../utils/typhoonSignals';
-import { sendTyphoonAlertNotification } from '../services/notificationService';
-import { saveAlertHistory } from '../services/storageService';
-import { generateId } from '../utils/typhoonSignals';
+import { cacheWeatherData, getCachedWeather, saveAlertHistory, getLastNotifTime, setLastNotifTime } from '../services/storageService';
+import {
+  sendTyphoonAlertNotification,
+  sendHeatAlertNotification,
+  sendUpcomingTyphoonNotification,
+} from '../services/notificationService';
+import { generateId, formatDate, detectTyphoonSignal } from '../utils/typhoonSignals';
 import { TyphoonAlert, TyphoonSignal } from '../types';
 
 export function useWeather() {
@@ -37,6 +39,13 @@ export function useWeather() {
           fetchCurrentWeather(lat, lon),
           fetchForecast(lat, lon),
         ]);
+
+        // Override the placeholder coordinate string with the actual geo-coded city name
+        const storeLocation = useAppStore.getState().location;
+        if (storeLocation) {
+          weatherData.city = storeLocation.city;
+          weatherData.country = storeLocation.country;
+        }
 
         // Cache for offline use
         await cacheWeatherData(weatherData);
@@ -76,6 +85,43 @@ export function useWeather() {
         } else {
           setActiveAlert(null);
         }
+
+        // Monitor High Heat Index
+        const previousHeatIndex = weather ? Math.max(weather.temperature, weather.feelsLike) : 0;
+        const currentHeatIndex = Math.max(weatherData.temperature, weatherData.feelsLike);
+        
+        if (previousHeatIndex < 25 && currentHeatIndex >= 25) {
+          const location = `${weatherData.city}, ${weatherData.country}`;
+          await sendHeatAlertNotification(currentHeatIndex, location);
+        }
+
+        // Monitor Forecast for Upcoming Typhoons (Signal >= 1)
+        if (forecastData.length > 0) {
+          let maxUpcomingSignal = 0;
+          let expectedDateStr = '';
+
+          for (const item of forecastData) {
+            const forecastSignal = detectTyphoonSignal(item.windSpeed, item.description, 0);
+            if (forecastSignal > maxUpcomingSignal && forecastSignal > signal) {
+              maxUpcomingSignal = forecastSignal;
+              expectedDateStr = formatDate(item.timestamp);
+            }
+          }
+
+          if (maxUpcomingSignal > 0) {
+            const lastUpcomingAlert = await getLastNotifTime('upcoming_typhoon');
+            const now = Date.now();
+            const sixHoursMs = 6 * 60 * 60 * 1000;
+
+            if (now - lastUpcomingAlert >= sixHoursMs) {
+              const location = `${weatherData.city}, ${weatherData.country}`;
+              await sendUpcomingTyphoonNotification(maxUpcomingSignal, location, expectedDateStr);
+              await setLastNotifTime('upcoming_typhoon', now);
+            }
+          }
+        }
+
+
       } catch (error: any) {
         console.error('Weather fetch error:', error);
         setWeatherError(error.message || 'Failed to fetch weather');

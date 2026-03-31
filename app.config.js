@@ -3,7 +3,7 @@ import 'dotenv/config';
 export default {
   expo: {
     name: 'Alisto:Go',
-    slug: 'alisto:go',
+    slug: 'alisto-go',
     version: '1.0.0',
     orientation: 'portrait',
     icon: './assets/icon.png',
@@ -71,7 +71,7 @@ export default {
     extra: {
       geminiApiKey: process.env.EXPO_PUBLIC_GEMINI_API_KEY || process.env.GEMINI_API_KEY,
       eas: {
-        projectId: 'your-eas-project-id',
+        projectId: '475a019f-577a-40ea-ac78-9475f1a4517b',
       },
     },
     scheme: 'alistogo',

@@ -1,11 +1,16 @@
 // app/(tabs)/alerts.tsx — Alert History Screen
 import React, { useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Pressable, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppStore } from '../../store/useAppStore';
 import AlertHistoryItem from '../../components/AlertHistoryItem';
 import { fontSizes } from '../../theme/typography';
 import { clearAlertHistory } from '../../services/storageService';
+import {
+  sendHeatAlertNotification,
+  sendTyphoonAlertNotification,
+  sendUpcomingTyphoonNotification
+} from '../../services/notificationService';
 
 export default function AlertsScreen() {
   const { alertHistory, currentSignal, activeAlert, setAlertHistory, weather } = useAppStore();
@@ -15,7 +20,7 @@ export default function AlertsScreen() {
     setAlertHistory([]);
   };
 
-  const isHeatAlertVisible = weather && (weather.temperature >= 25 || weather.feelsLike >= 25);
+  const isHeatAlertVisible = weather && (weather.temperature >= 35 || weather.feelsLike >= 38);
   const isAnyAlertVisible = alertHistory.length > 0 || isHeatAlertVisible || currentSignal > 0;
 
   return (
@@ -27,11 +32,33 @@ export default function AlertsScreen() {
             <Text style={styles.title}>Alert History</Text>
             <Text style={styles.subtitle}>{alertHistory.length} recorded alerts</Text>
           </View>
-          {alertHistory.length > 0 && (
-            <Pressable onPress={handleClearHistory} style={styles.clearBtn}>
-              <Text style={styles.clearBtnText}>Clear</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Pressable
+              onPress={() => {
+                const locationStr = weather?.city ? `${weather.city}, ${weather.country}` : 'Test City, PH';
+
+                Alert.alert(
+                  'Test Notifications',
+                  'Select an alert type to verify device push behavior:',
+                  [
+                    { text: 'Heat Alert (25°C+)', onPress: () => sendHeatAlertNotification(32, locationStr) },
+                    { text: 'Signal #1 (Active)', onPress: () => sendTyphoonAlertNotification(1, locationStr) },
+                    { text: 'Signal #3 (Active)', onPress: () => sendTyphoonAlertNotification(3, locationStr) },
+                    { text: 'Signal #2 (Upcoming)', onPress: () => sendUpcomingTyphoonNotification(2, locationStr, 'Tomorrow') },
+                    { text: 'Cancel', style: 'cancel' }
+                  ]
+                );
+              }}
+              style={[styles.clearBtn, { borderColor: 'rgba(245, 158, 11, 0.3)', backgroundColor: 'rgba(245, 158, 11, 0.15)' }]}
+            >
+              <Text style={[styles.clearBtnText, { color: '#fbbf24' }]}>Test Notify</Text>
             </Pressable>
-          )}
+            {alertHistory.length > 0 && (
+              <Pressable onPress={handleClearHistory} style={styles.clearBtn}>
+                <Text style={styles.clearBtnText}>Clear</Text>
+              </Pressable>
+            )}
+          </View>
         </View>
 
         {/* Active Signal Banner */}

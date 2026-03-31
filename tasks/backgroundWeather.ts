@@ -2,11 +2,21 @@
 import * as BackgroundFetch from 'expo-background-fetch';
 import * as TaskManager from 'expo-task-manager';
 import { BACKGROUND_WEATHER_TASK } from '../utils/constants';
-import { fetchCurrentWeather } from '../services/weatherService';
-import { getCachedLocation, cacheWeatherData } from '../services/storageService';
-import { detectTyphoonSignal } from '../utils/typhoonSignals';
-import { sendTyphoonAlertNotification } from '../services/notificationService';
-import { getCachedWeather } from '../services/storageService';
+import { fetchCurrentWeather, fetchForecast } from '../services/weatherService';
+import {
+  getCachedLocation,
+  cacheWeatherData,
+  getCachedWeather,
+  getLastNotifTime,
+  setLastNotifTime,
+} from '../services/storageService';
+import { detectTyphoonSignal, formatDate } from '../utils/typhoonSignals';
+import {
+  sendTyphoonAlertNotification,
+  sendHeatAlertNotification,
+  sendUpcomingTyphoonNotification,
+  sendWeatherUpdateNotification,
+} from '../services/notificationService';
 
 // Define the background task
 TaskManager.defineTask(BACKGROUND_WEATHER_TASK, async () => {
@@ -15,9 +25,18 @@ TaskManager.defineTask(BACKGROUND_WEATHER_TASK, async () => {
     if (!location) return BackgroundFetch.BackgroundFetchResult.NoData;
 
     const weather = await fetchCurrentWeather(location.lat, location.lon);
+    
+    // Use cached location names instead of placeholders
+    weather.city = location.city;
+    weather.country = location.country;
+    
     await cacheWeatherData(weather);
 
-    // Check for signal changes
+    const now = Date.now();
+    const sixHoursMs = 6 * 60 * 60 * 1000;
+    const locationStr = `${weather.city}, ${weather.country}`;
+
+    // 1. Check for Active Signal Changes
     const signal = detectTyphoonSignal(weather.windSpeed, weather.description, 0);
     const cached = await getCachedWeather();
     const prevSignal = cached
@@ -25,11 +44,51 @@ TaskManager.defineTask(BACKGROUND_WEATHER_TASK, async () => {
       : 0;
 
     if (signal > 0 && signal !== prevSignal) {
-      await sendTyphoonAlertNotification(
-        signal as any,
-        `${weather.city}, ${weather.country}`
-      );
+      await sendTyphoonAlertNotification(signal as any, locationStr);
     }
+
+    // 2. Check for upcoming threats in forecast
+    const forecast = await fetchForecast(location.lat, location.lon);
+    if (forecast.length > 0) {
+      let maxUpcomingSignal = 0;
+      let expectedDateStr = '';
+
+      for (const item of forecast) {
+        const forecastSignal = detectTyphoonSignal(item.windSpeed, item.description, 0);
+        if (forecastSignal > maxUpcomingSignal && forecastSignal > signal) {
+          maxUpcomingSignal = forecastSignal;
+          expectedDateStr = formatDate(item.timestamp);
+        }
+      }
+
+      if (maxUpcomingSignal > 0) {
+        const lastUpcomingAlert = await getLastNotifTime('upcoming_typhoon');
+        if (now - lastUpcomingAlert >= sixHoursMs) {
+          await sendUpcomingTyphoonNotification(maxUpcomingSignal, locationStr, expectedDateStr);
+          await setLastNotifTime('upcoming_typhoon', now);
+        }
+      }
+    }
+
+    // 3. Check for High Heat Index (>= 25°C)
+    const heatIndex = Math.max(weather.temperature, weather.feelsLike);
+    if (heatIndex >= 25) {
+      const lastHeatAlert = await getLastNotifTime('heat_alert');
+      if (now - lastHeatAlert >= sixHoursMs) {
+        await sendHeatAlertNotification(heatIndex, locationStr);
+        await setLastNotifTime('heat_alert', now);
+      }
+    }
+
+    // 4. Regular Weather Status Update (Every 30 mins)
+    const lastWeatherUpdate = await getLastNotifTime('weather_status');
+    const thirtyMinsMs = 30 * 60 * 1000;
+    if (now - lastWeatherUpdate >= thirtyMinsMs) {
+      await sendWeatherUpdateNotification(weather.city, weather.temperature, weather.description);
+      await setLastNotifTime('weather_status', now);
+    }
+
+
 
     return BackgroundFetch.BackgroundFetchResult.NewData;
   } catch (error) {

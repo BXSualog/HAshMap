@@ -1,0 +1,46 @@
+﻿diff --git a/App.tsx b/App.tsx
+index ed3e5ab..3d5cab2 100644
+--- a/App.tsx
++++ b/App.tsx
+@@ -273,11 +273,11 @@ const styles = StyleSheet.create({
+   /* Premium Weather Widget */
+   weatherWidget: {
+     padding: 24,
+-    backgroundColor: '#14294bff', // beautiful blue shade
++    backgroundColor: '#14294b', // beautiful blue shade
+     borderRadius: 16,
+     marginBottom: 20,
+     alignItems: 'center',
+-    shadowColor: '#14294bff',
++    shadowColor: '#14294b',
+     shadowOffset: { width: 0, height: 4 },
+     shadowOpacity: 0.4,
+     shadowRadius: 10,
+diff --git a/components/WeatherCard.tsx b/components/WeatherCard.tsx
+index 97160d4..df5300c 100644
+--- a/components/WeatherCard.tsx
++++ b/components/WeatherCard.tsx
+@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
+   temperature: {
+     fontSize: 96,
+     fontWeight: '200',
+-    color: '#ffffffff',
++    color: '#ffffff',
+     letterSpacing: -4,
+   },
+   description: {
+diff --git a/theme/colors.ts b/theme/colors.ts
+index 8a13a35..d4822fa 100644
+--- a/theme/colors.ts
++++ b/theme/colors.ts
+@@ -49,8 +49,8 @@ export const signalColors: Record<number, string> = {
+ };
+ 
+ export const conditionGradients: Record<string, string[]> = {
+-  clear: ['#5451f5ff', '#0689a9ff', '#000000ff'],
+-  clouds: ['#5b5b5bff', '#b1b1b1ff', '#000000ff'],
++  clear: ['#5451f5', '#0689a9', '#000000'],
++  clouds: ['#5b5b5b', '#b1b1b1', '#000000'],
+   rain: ['#86B9B1', '#4B7273', '#042631'],
+   drizzle: ['#C9D6DF', '#99A9B8', '#7D8CA3'],
+   thunderstorm: ['#765c96', '#5f3f4d', '#372951'],

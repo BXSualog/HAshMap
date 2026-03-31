@@ -7,6 +7,7 @@ const KEYS = {
   ALERTS: 'alistoai_alerts',
   LOCATION: 'alistoai_location',
   SETTINGS: 'alistoai_settings',
+  NOTIF_TRACKER: 'alistoai_notif_tracker',
 };
 
 export const defaultSettings: UserSettings = {
@@ -64,3 +65,14 @@ export async function getSettings(): Promise<UserSettings> {
   const raw = await AsyncStorage.getItem(KEYS.SETTINGS);
   return raw ? { ...defaultSettings, ...JSON.parse(raw) } : defaultSettings;
 }
+
+// ── Notification Tracking ──────────────────────────────
+export async function getLastNotifTime(type: string): Promise<number> {
+  const raw = await AsyncStorage.getItem(`${KEYS.NOTIF_TRACKER}_${type}`);
+  return raw ? parseInt(raw, 10) : 0;
+}
+
+export async function setLastNotifTime(type: string, time: number): Promise<void> {
+  await AsyncStorage.setItem(`${KEYS.NOTIF_TRACKER}_${type}`, time.toString());
+}
+

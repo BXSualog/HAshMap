@@ -1,0 +1,52 @@
+Version 1.1.0 (Major Update)
+Date: 2026-03-30
+
+Summary of Updates:
+Revolutionized the Alerting System with Forecast-based Detection and Comprehensive Background Monitoring. The app now scans the 5-day forecast for upcoming typhoon threats and monitors both typhoons and high heat index hazards even when the app is closed.
+
+Key Features:
+- Upcoming Typhoon Detection: Automatically scans for Signal #1–5 threats in your location's 5-day forecast.
+- Periodic Weather Status: Sends a regular weather update (e.g., "Sunny, 30°C") every 30 minutes.
+- Intelligent Alert Throttling: "Upcoming" and "Heat Index" alerts are limited to once every 6 hours to prevent notification fatigue while maintaining safety.
+- Detailed Signal Context: Active notifications now include specific PAGASA-based signal descriptions and primary safety tips.
+- Background Heat Warnings: Extended the background thread to monitor and notify you of dangerous heat conditions (25°C+) without needing to open the app.
+
+Modified Files:
+- services/storageService.ts: Added persistent notification tracking (NOTIF_TRACKER).
+- services/notificationService.ts: Added `sendUpcomingTyphoonNotification` and enhanced existing alert templates.
+- hooks/useWeather.ts: Integrated forecast scanning logic for real-time foreground updates.
+- tasks/backgroundWeather.ts: Overhauled the background worker to support forecast monitoring and heat hazard detection.
+
+---------------------------------------------------
+
+Version 1.0.2 (Minor Update)
+Date: 2026-03-30
+
+Summary of Updates:
+Implemented local device push notifications for High Heat Index alerts. Notifications are now correctly sent to the device notification bar and lockscreen. Added a test functionality in the UI for verification.
+
+Modified Files:
+- services/notificationService.ts: Added `sendHeatAlertNotification` method for handling 25°C+ alerts with max priority context.
+- hooks/useWeather.ts: Triggers the new heat alert locally when temperature metrics meet threshold.
+- app/(tabs)/alerts.tsx: Added a "Test Notify" manual verification button on the Alerts page header.
+
+---------------------------------------------------
+
+Version 1.0.1 (Minor Update)
+Date: 2026-03-30
+
+Summary of Updates:
+Standardized hex color codes across the codebase by converting 8-character hex codes (with trailing alpha channel) to standard 6-character hex codes.
+
+Modified Files:
+- App.tsx
+  * backgroundColor and shadowColor for premium weather widget: #14294bff -> #14294b
+- components/WeatherCard.tsx
+  * temperature text color: #ffffffff -> #ffffff
+- theme/colors.ts
+  * gradient color arrays for 'clear' and 'clouds' condition states updated to standard 6-character hex format
+
+
+npx expo run:android
+
+npx expo start --dev-client

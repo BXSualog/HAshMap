@@ -273,11 +273,11 @@ const styles = StyleSheet.create({
   /* Premium Weather Widget */
   weatherWidget: {
     padding: 24,
-    backgroundColor: '#14294bff', // beautiful blue shade
+    backgroundColor: '#14294b', // beautiful blue shade
     borderRadius: 16,
     marginBottom: 20,
     alignItems: 'center',
-    shadowColor: '#14294bff',
+    shadowColor: '#14294b',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 10,

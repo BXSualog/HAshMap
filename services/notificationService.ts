@@ -29,11 +29,10 @@ export function initializeNotifications() {
 
     Notifications.setNotificationHandler({
       handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: true,
-        shouldSetBadge: true,
         shouldShowBanner: true,
         shouldShowList: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
       }),
     });
 
@@ -65,6 +64,15 @@ export async function requestNotificationPermissions(): Promise<boolean> {
       vibrationPattern: [0, 250, 250, 250],
       lightColor: '#ef4444',
       sound: 'default',
+      lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+    });
+    await Notifications.setNotificationChannelAsync('heat-alerts', {
+      name: 'Heat Alerts',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#fbbf24',
+      sound: 'default',
+      lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
     });
     await Notifications.setNotificationChannelAsync('weather-updates', {
       name: 'Weather Updates',
@@ -93,20 +101,55 @@ export async function sendTyphoonAlertNotification(
   try {
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: `${info.icon} Typhoon Alert: ${info.label}`,
-        body: `${info.label} has been raised in ${location}. ${info.tips[0] || 'Stay safe.'}`,
-        data: { signal, location, type: 'typhoon_alert' },
+        title: `${info.icon} Typhoon Alert: ${info.label} In Effect`,
+        body: `${info.description} Safety measures: ${info.tips[0] || 'Stay informed.'}`,
+        data: { signal, location, type: 'typhoon_active' },
         sound: 'default',
         priority: Notifications.AndroidNotificationPriority.MAX,
         categoryIdentifier: 'typhoon-alert',
         color: info.color,
       },
-      trigger: null,
+      trigger: {
+        seconds: 1,
+        channelId: 'typhoon-alerts',
+      },
     });
   } catch (err) {
     console.warn('Failed to send notification:', err);
   }
 }
+
+export async function sendUpcomingTyphoonNotification(
+  signal: number,
+  location: string,
+  dateStr: string
+): Promise<void> {
+  const Notifications = getNotifications();
+  if (!Notifications) return;
+
+  const info = TYPHOON_SIGNAL_INFO[signal as keyof typeof TYPHOON_SIGNAL_INFO];
+  if (!info) return;
+
+  try {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: `🌀 Upcoming Typhoon Threat`,
+        body: `Potential ${info.label} detected for ${location} on ${dateStr}. Please prepare accordingly.`,
+        data: { signal, location, type: 'typhoon_upcoming' },
+        sound: 'default',
+        priority: Notifications.AndroidNotificationPriority.HIGH,
+        color: info.color,
+      },
+      trigger: {
+        seconds: 1,
+        channelId: 'typhoon-alerts',
+      },
+    });
+  } catch (err) {
+    console.warn('Failed to send upcoming notification:', err);
+  }
+}
+
 
 export async function sendWeatherUpdateNotification(
   city: string,
@@ -123,11 +166,44 @@ export async function sendWeatherUpdateNotification(
         body: `${temp}°C, ${description}`,
         data: { type: 'weather_update' },
         sound: 'default',
+        priority: Notifications.AndroidNotificationPriority.DEFAULT,
       },
-      trigger: null,
+      trigger: {
+        seconds: 1,
+        channelId: 'weather-updates',
+      },
     });
   } catch (err) {
     console.warn('Failed to send weather notification:', err);
+  }
+}
+
+export async function sendHeatAlertNotification(
+  temp: number,
+  location: string
+): Promise<boolean> {
+  const Notifications = getNotifications();
+  if (!Notifications) return false;
+
+  try {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: `⚠️ High Heat Index Alert`,
+        body: `It feels like ${Math.round(temp)}°C in ${location}. Stay hydrated and cool!`,
+        data: { type: 'heat_alert', temp, location },
+        sound: 'default',
+        priority: Notifications.AndroidNotificationPriority.MAX,
+        color: '#fbbf24',
+      },
+      trigger: {
+        seconds: 1,
+        channelId: 'heat-alerts',
+      },
+    });
+    return true;
+  } catch (err) {
+    console.warn('Failed to send heat alert notification:', err);
+    return false;
   }
 }
 

@@ -4,13 +4,14 @@
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web"
   },
   "dependencies": {
     "@expo/metro-runtime": "~55.0.7",
     "@expo/vector-icons": "^15.1.1",
+    "alisto-login": "file:../../alistoLogin",
     "@google/genai": "^1.46.0",
     "@google/generative-ai": "^0.24.1",
     "@react-native-async-storage/async-storage": "2.2.0",
@@ -20,9 +21,11 @@
     "axios": "^1.13.6",
     "dotenv": "^17.3.1",
     "expo": "~55.0.9",
+    "firebase": "^12.11.0",
     "expo-background-fetch": "^55.0.10",
     "expo-blur": "^55.0.10",
     "expo-constants": "~55.0.8",
+    "expo-dev-client": "~55.0.19",
     "expo-linear-gradient": "^55.0.9",
     "expo-linking": "~55.0.9",
     "expo-location": "^55.1.4",
