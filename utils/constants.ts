@@ -2,6 +2,7 @@
 
 export const BACKGROUND_WEATHER_TASK = 'BACKGROUND_WEATHER_FETCH';
 export const WEATHER_FETCH_INTERVAL = 15; // minutes
+export const HEAT_INDEX_THRESHOLD = 38;
 
 export const OPENWEATHER_BASE = 'https://api.openweathermap.org/data/2.5';
 

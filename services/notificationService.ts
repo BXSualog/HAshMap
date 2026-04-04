@@ -63,7 +63,6 @@ export async function requestNotificationPermissions(): Promise<boolean> {
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
       lightColor: '#ef4444',
-      sound: 'default',
       lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
     });
     await Notifications.setNotificationChannelAsync('heat-alerts', {
@@ -71,13 +70,11 @@ export async function requestNotificationPermissions(): Promise<boolean> {
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
       lightColor: '#fbbf24',
-      sound: 'default',
       lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
     });
     await Notifications.setNotificationChannelAsync('weather-updates', {
       name: 'Weather Updates',
       importance: Notifications.AndroidImportance.DEFAULT,
-      sound: 'default',
     });
   }
 
@@ -104,7 +101,7 @@ export async function sendTyphoonAlertNotification(
         title: `${info.icon} Typhoon Alert: ${info.label} In Effect`,
         body: `${info.description} Safety measures: ${info.tips[0] || 'Stay informed.'}`,
         data: { signal, location, type: 'typhoon_active' },
-        sound: 'default',
+        sound: true,
         priority: Notifications.AndroidNotificationPriority.MAX,
         categoryIdentifier: 'typhoon-alert',
         color: info.color,
@@ -136,7 +133,7 @@ export async function sendUpcomingTyphoonNotification(
         title: `🌀 Upcoming Typhoon Threat`,
         body: `Potential ${info.label} detected for ${location} on ${dateStr}. Please prepare accordingly.`,
         data: { signal, location, type: 'typhoon_upcoming' },
-        sound: 'default',
+        sound: true,
         priority: Notifications.AndroidNotificationPriority.HIGH,
         color: info.color,
       },
@@ -165,7 +162,7 @@ export async function sendWeatherUpdateNotification(
         title: `🌤️ Weather Update — ${city}`,
         body: `${temp}°C, ${description}`,
         data: { type: 'weather_update' },
-        sound: 'default',
+        sound: true,
         priority: Notifications.AndroidNotificationPriority.DEFAULT,
       },
       trigger: {
@@ -191,7 +188,7 @@ export async function sendHeatAlertNotification(
         title: `⚠️ High Heat Index Alert`,
         body: `It feels like ${Math.round(temp)}°C in ${location}. Stay hydrated and cool!`,
         data: { type: 'heat_alert', temp, location },
-        sound: 'default',
+        sound: true,
         priority: Notifications.AndroidNotificationPriority.MAX,
         color: '#fbbf24',
       },

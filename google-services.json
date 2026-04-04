@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "40129169891",
+    "project_id": "alistouser-database123",
+    "storage_bucket": "alistouser-database123.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:40129169891:android:550a952857a9f51e8ef8d6",
+        "android_client_info": {
+          "package_name": "com.bxfiles.alistoai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHcRN_1n3gpQAbuJ73rNDpuWJue1S_pBg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:40129169891:android:13728ef94ec00cd18ef8d6",
+        "android_client_info": {
+          "package_name": "com.hashmap.alistoGo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHcRN_1n3gpQAbuJ73rNDpuWJue1S_pBg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

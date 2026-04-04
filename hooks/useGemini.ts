@@ -5,6 +5,9 @@ import { sendGeminiMessage } from '../services/geminiService';
 import { ChatMessage as GeminiHistory } from '../services/geminiService';
 import { ChatMessage } from '../types';
 import { generateId } from '../utils/typhoonSignals';
+import { db, auth } from 'alisto-login';
+import { ref, push, serverTimestamp } from 'firebase/database';
+
 
 export function useGemini() {
   const {
@@ -53,7 +56,21 @@ export function useGemini() {
         const reply = await sendGeminiMessage(userText, weather, activeAlert, history);
 
         updateLastChatMessage({ content: reply, isLoading: false });
+
+        // Record interaction in database
+        const userId = auth.currentUser?.uid || 'guest';
+        const chatRef = ref(db, `users/${userId}/chatHistory`);
+        
+        await push(chatRef, {
+          userPrompt: userText.trim(),
+          aiResponse: reply,
+          timestamp: serverTimestamp(),
+          location: weather?.city || 'unknown',
+          weatherDesc: weather?.description || 'none'
+        });
+
       } catch (error: any) {
+
         updateLastChatMessage({
           content: `⚠️ Error: ${error.message}. Please try again.`,
           isLoading: false,

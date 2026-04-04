@@ -1,5 +1,5 @@
 // theme/typography.ts
-import { Platform } from 'react-native';
+import { Platform, PixelRatio } from 'react-native';
 
 export const fonts = {
   regular: Platform.select({ ios: 'System', android: 'Roboto', default: 'System' }),
@@ -20,8 +20,18 @@ export const fontSizes = {
   '4xl': 52,
 };
 
+// Scale font for tablets/large screens
+export const getResponsiveFontSize = (size: keyof typeof fontSizes, isLargeScreen: boolean) => {
+  const baseSize = fontSizes[size];
+  if (!isLargeScreen) return baseSize;
+  
+  // Scale up by 20% on tablets/larger screens
+  return Math.round(baseSize * 1.2);
+};
+
 export const lineHeights = {
   tight: 1.2,
   normal: 1.5,
   relaxed: 1.7,
 };
+

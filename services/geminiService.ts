@@ -1,7 +1,6 @@
 // services/geminiService.ts
 import { WeatherData, TyphoonAlert } from '../types';
-
-import Constants from 'expo-constants';
+import axios from 'axios';
 
 // Polyfill AbortSignal.timeout for React Native environment
 const globalAny = global as any;
@@ -15,9 +14,18 @@ if (!globalAny.AbortSignal.timeout) {
   };
 }
 
-const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || Constants.expoConfig?.extra?.geminiApiKey || "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";
+// Key is set directly to avoid Metro's "undefined" string inlining issue with process.env
+const getAPIKey = () => {
+  const envKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
+  const fallbackKey = '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';
+  // Check if key is a valid string and not literally "undefined"
+  const isValid = (k: any) => k && typeof k === 'string' && k.startsWith('sk-or-v1-') && k.length > 32;
+  return isValid(envKey) ? envKey as string : fallbackKey;
+};
 
-console.log('[Gemini] Key loaded:', GEMINI_API_KEY ? `${GEMINI_API_KEY.slice(0, 8)}...` : 'EMPTY ❌');
+const OPENROUTER_API_KEY = getAPIKey();
+
+console.log('[Gemini] Key loaded:', OPENROUTER_API_KEY ? `${OPENROUTER_API_KEY.slice(0, 12)}...` : 'EMPTY ❌');
 
 function buildWeatherContext(weather: WeatherData | null, alert: TyphoonAlert | null): string {
   if (!weather) return 'No current weather data available.';
@@ -74,34 +82,37 @@ export async function sendGeminiMessage(
     { role: 'user', content: userMessage }
   ];
 
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${GEMINI_API_KEY}`,
-      'HTTP-Referer': 'https://alistogo.com', // Optional, for OpenRouter rankings
-      'X-Title': 'Alisto:Go', // Optional, for OpenRouter rankings
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      model: 'google/gemini-2.5-flash',
-      messages: messages,
-      temperature: 0.7,
-      max_tokens: 512,
-      top_p: 0.95
-    })
-  });
+  try {
+    console.log('[Gemini] Sending request | Key:', OPENROUTER_API_KEY ? `"Bearer ${OPENROUTER_API_KEY.slice(0, 12)}..."` : '"Bearer [EMPTY]"');
+    const response = await axios.post(
+      'https://openrouter.ai/api/v1/chat/completions',
+      {
+        model: 'google/gemini-2.0-flash-001',
+        messages: messages,
+        temperature: 0.7,
+        max_tokens: 512,
+        top_p: 0.95,
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+          'HTTP-Referer': 'https://alistogo.com',
+          'X-Title': 'Alisto:Go',
+          'Content-Type': 'application/json',
+        },
+      }
+    );
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    console.error('OpenRouter Error:', errorData);
-    throw new Error(errorData.error?.message || `API Error: ${response.status}`);
+    const data = response.data;
+    const text = data.choices[0]?.message?.content;
+    if (!text) throw new Error('No response from OpenRouter');
+
+    return text.trim();
+  } catch (error: any) {
+    const errMsg = error?.response?.data?.error?.message || error.message || `API Error: ${error}`;
+    console.error('OpenRouter Error:', error?.response?.data || error.message);
+    throw new Error(errMsg);
   }
-
-  const data = await response.json();
-  const text = data.choices[0]?.message?.content;
-  if (!text) throw new Error('No response from OpenRouter');
-
-  return text.trim();
 }
 
 export async function getQuickWeatherSummary(

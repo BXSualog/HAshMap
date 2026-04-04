@@ -23,8 +23,9 @@ import WeatherCard from '../../components/WeatherCard';
 import TyphoonBanner from '../../components/TyphoonBanner';
 import ForecastRow from '../../components/ForecastRow';
 import GlassCard from '../../components/GlassCard';
-import { fontSizes, fonts } from '../../theme/typography';
-import { TYPHOON_SIGNAL_INFO } from '../../utils/constants';
+import { fontSizes, fonts, getResponsiveFontSize } from '../../theme/typography';
+import { useResponsive } from '../../hooks/useResponsive';
+import { TYPHOON_SIGNAL_INFO, HEAT_INDEX_THRESHOLD } from '../../utils/constants';
 import { formatDateTime } from '../../utils/typhoonSignals';
 
 export default function DashboardScreen() {
@@ -43,17 +44,19 @@ export default function DashboardScreen() {
     setInitialized,
     isInitialized,
     updateSettings,
+    user,
   } = useAppStore();
 
   const { refreshWeather } = useWeather();
+  const { isLargeScreen, layout, spacing } = useResponsive();
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  // Initialize app on mount
+  // Initialize app when user is logged in
   useEffect(() => {
-    if (!isInitialized) {
+    if (user && !isInitialized) {
       initializeApp();
     }
-  }, []);
+  }, [user, isInitialized]);
 
   useEffect(() => {
     if (weather) {
@@ -104,18 +107,18 @@ export default function DashboardScreen() {
   }, [location, refreshWeather]);
 
   const condition = weather?.condition || 'clear';
-  const isHeatAlertVisible = weather && (weather.temperature >= 25 || weather.feelsLike >= 25);
+  const isHeatAlertVisible = weather && (weather.temperature >= HEAT_INDEX_THRESHOLD || weather.feelsLike >= HEAT_INDEX_THRESHOLD);
 
   return (
     <DynamicBackground condition={condition} signal={currentSignal} style={styles.flex}>
       <SafeAreaView style={styles.flex} edges={['top']}>
         {/* Header */}
-        <View style={styles.header}>
+        <View style={[styles.header, { paddingHorizontal: layout.horizontalPadding }]}>
           <View>
-            <Text style={styles.appName}>
+            <Text style={[styles.appName, { fontSize: getResponsiveFontSize('2xl', isLargeScreen) }]}>
               Alisto:<Text style={styles.appNameHighlight}>Go</Text>
             </Text>
-            <Text style={styles.headerSub}>
+            <Text style={[styles.headerSub, { fontSize: getResponsiveFontSize('sm', isLargeScreen) }]}>
               {location ? `${location.city}, ${location.province}` : 'Detecting location...'}
             </Text>
           </View>
@@ -131,8 +134,12 @@ export default function DashboardScreen() {
               tintColor="rgba(255,255,255,0.5)"
             />
           }
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingHorizontal: isLargeScreen ? layout.horizontalPadding : 0 }
+          ]}
         >
+          <View style={isLargeScreen ? styles.responsiveContainer : null}>
           {/* Typhoon Banner */}
           {activeAlert && activeAlert.signal > 0 && (
             <TyphoonBanner
@@ -193,6 +200,7 @@ export default function DashboardScreen() {
           )}
 
           <View style={{ height: 32 }} />
+          </View>
         </ScrollView>
       </SafeAreaView>
     </DynamicBackground>
@@ -205,9 +213,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
     paddingTop: 8,
     paddingBottom: 16,
+  },
+  responsiveContainer: {
+    alignSelf: 'center',
+    width: '100%',
+    maxWidth: 800, // Keep content readable on very wide screens
   },
   appName: {
     color: '#ffffff',

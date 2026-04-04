@@ -17,9 +17,35 @@ import { fontSizes } from '../../theme/typography';
 import { signalColors } from '../../theme/colors';
 import { EMERGENCY_NUMBERS } from '../../utils/constants';
 import { TyphoonSignal } from '../../types';
+import { auth, signOut } from 'alisto-login';
+
 
 export default function SettingsScreen() {
-  const { settings, updateSettings, weather, location, currentSignal, isOffline } = useAppStore();
+  const { settings, updateSettings, weather, location, currentSignal, isOffline, setUser } = useAppStore();
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Log Out',
+      'Are you sure you want to log out of your account?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Log Out',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await signOut(auth);
+              setUser(null);
+            } catch (error) {
+              console.error('Logout error:', error);
+              Alert.alert('Error', 'Failed to log out. Please try again.');
+            }
+          }
+        },
+      ]
+    );
+  };
+
 
   const toggle = async (key: keyof typeof settings, value: boolean) => {
     const updated = { ...settings, [key]: value };
@@ -121,14 +147,20 @@ export default function SettingsScreen() {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Configuration</Text>
             <View style={styles.apiRow}>
-              <Text style={styles.apiLabel}>Gemini API</Text>
+              <Text style={styles.apiLabel}>Alisto Chatbot</Text>
               <View style={styles.apiStatus}>
                 <View style={styles.statusDot} />
                 <Text style={styles.apiStatusText}>Connected</Text>
               </View>
             </View>
-            <Text style={styles.apiHint}>Update API keys in the .env file and rebuild the app.</Text>
+            <Text style={styles.apiHint}>This app is using Gemini</Text>
           </View>
+
+          {/* Log Out Button */}
+          <Pressable style={styles.logoutBtn} onPress={handleLogout}>
+            <Text style={styles.logoutText}>Log Out Account</Text>
+          </Pressable>
+
 
           <View style={{ height: 40 }} />
         </ScrollView>
@@ -260,4 +292,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingBottom: 12,
   },
+  logoutBtn: {
+    backgroundColor: 'rgba(240, 68, 68, 0.1)',
+    borderRadius: 16,
+    paddingVertical: 16,
+    alignItems: 'center',
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(240, 68, 68, 0.2)',
+  },
+  logoutText: {
+    color: '#f87171',
+    fontSize: fontSizes.base,
+    fontWeight: '700',
+  },
 });
+

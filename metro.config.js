@@ -4,7 +4,7 @@ const path = require('path');
 const config = getDefaultConfig(__dirname);
 
 // Path to the local alistoLogin module
-const alistoLoginPath = path.resolve(__dirname, '../../alistoLogin');
+const alistoLoginPath = path.resolve(__dirname, 'alistoLogin');
 
 // 1. Watch the local module folder
 config.watchFolders = [alistoLoginPath];

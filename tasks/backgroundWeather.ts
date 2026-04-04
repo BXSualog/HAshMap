@@ -1,7 +1,7 @@
 // tasks/backgroundWeather.ts
 import * as BackgroundFetch from 'expo-background-fetch';
 import * as TaskManager from 'expo-task-manager';
-import { BACKGROUND_WEATHER_TASK } from '../utils/constants';
+import { BACKGROUND_WEATHER_TASK, HEAT_INDEX_THRESHOLD } from '../utils/constants';
 import { fetchCurrentWeather, fetchForecast } from '../services/weatherService';
 import {
   getCachedLocation,
@@ -70,9 +70,9 @@ TaskManager.defineTask(BACKGROUND_WEATHER_TASK, async () => {
       }
     }
 
-    // 3. Check for High Heat Index (>= 25°C)
+    // 3. Check for High Heat Index (>= HEAT_INDEX_THRESHOLD°C)
     const heatIndex = Math.max(weather.temperature, weather.feelsLike);
-    if (heatIndex >= 25) {
+    if (heatIndex >= HEAT_INDEX_THRESHOLD) {
       const lastHeatAlert = await getLastNotifTime('heat_alert');
       if (now - lastHeatAlert >= sixHoursMs) {
         await sendHeatAlertNotification(heatIndex, locationStr);

@@ -3,6 +3,7 @@ import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { ForecastItem } from '../types';
 import { fontSizes } from '../theme/typography';
+import { useResponsive } from '../hooks/useResponsive';
 import { formatDate } from '../utils/typhoonSignals';
 
 const EMOJIS: Record<string, string> = {
@@ -15,18 +16,19 @@ interface ForecastRowProps {
 }
 
 export default function ForecastRow({ forecast }: ForecastRowProps) {
+  const { isLargeScreen, layout } = useResponsive();
   if (!forecast.length) return null;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isLargeScreen && { marginHorizontal: 0 }]}>
       <Text style={styles.title}>5-Day Forecast</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={[styles.scroll, { gap: isLargeScreen ? 16 : 10 }]}>
         {forecast.map((item) => (
-          <View key={item.timestamp} style={styles.card}>
-            <Text style={styles.date}>{formatDate(item.timestamp)}</Text>
-            <Text style={styles.emoji}>{EMOJIS[item.condition] || '🌤️'}</Text>
-            <Text style={styles.temp}>{item.temperature}°</Text>
-            <Text style={styles.desc} numberOfLines={2}>{item.description}</Text>
+          <View key={item.timestamp} style={[styles.card, isLargeScreen && { width: 130, padding: 20 }]}>
+            <Text style={[styles.date, isLargeScreen && { fontSize: fontSizes.sm }]}>{formatDate(item.timestamp)}</Text>
+            <Text style={[styles.emoji, { fontSize: isLargeScreen ? 40 : 28 }]}>{EMOJIS[item.condition] || '🌤️'}</Text>
+            <Text style={[styles.temp, isLargeScreen && { fontSize: fontSizes.xl }]}>{item.temperature}°</Text>
+            <Text style={[styles.desc, isLargeScreen && { fontSize: fontSizes.xs, lineHeight: 16 }]} numberOfLines={2}>{item.description}</Text>
           </View>
         ))}
       </ScrollView>

@@ -1,9 +1,10 @@
 {
   "expo": {
     "name": "Alisto:Go",
-    "slug": "alisto-go",
+    "slug": "alisto-go-app",
+    "scheme": "alisto",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -17,14 +18,20 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#0a0e27",
-        "foregroundImage": "./assets/adaptive-icon.png"
+        "backgroundColor": "#ffffff",
+        "foregroundImage": "./assets/icon.png",
+        "backgroundImage": "./assets/android-icon-background.png"
       },
       "package": "com.bxfiles.alistoai",
       "softwareKeyboardLayoutMode": "adjustResize"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d2de439f-c9f4-44f2-9b0a-bd4b4dc2cf56"
+      }
     }
   }
 }

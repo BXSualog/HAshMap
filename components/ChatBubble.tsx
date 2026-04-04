@@ -41,6 +41,22 @@ function TypingDots() {
   );
 }
 
+const renderFormattedText = (text: string) => {
+  if (!text) return null;
+  // Split by ** delimiters and capture the groups
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return (
+        <Text key={index} style={{ fontWeight: 'bold' }}>
+          {part.slice(2, -2)}
+        </Text>
+      );
+    }
+    return part;
+  });
+};
+
 export default function ChatBubble({ message }: ChatBubbleProps) {
   const isUser = message.role === 'user';
   const [translatedPlace, setTranslatedPlace] = useState<string | null>(null);
@@ -101,7 +117,7 @@ export default function ChatBubble({ message }: ChatBubbleProps) {
         ) : (
           <>
             <Text style={[styles.text, isUser ? styles.userText : styles.aiText]}>
-              {message.content}
+              {renderFormattedText(message.content)}
             </Text>
             {translatedPlace && (
               <View style={styles.placeHintContainer}>

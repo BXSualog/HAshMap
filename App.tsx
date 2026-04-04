@@ -15,7 +15,18 @@ if (!globalAny.AbortSignal.timeout) {
   };
 }
 
-const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || Constants.expoConfig?.extra?.geminiApiKey || "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";
+const getChatAPIKey = () => {
+  const envKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
+  const extraKey = Constants.expoConfig?.extra?.geminiApiKey;
+  const fallbackKey = "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";
+  // Check if key is a valid string and not literally "undefined"
+  const isValid = (k: any) => k && typeof k === 'string' && k.startsWith('sk-or-v1-') && k.length > 32;
+  if (isValid(envKey)) return envKey as string;
+  if (isValid(extraKey)) return extraKey as string;
+  return fallbackKey;
+};
+
+const GEMINI_API_KEY = getChatAPIKey();
 
 export default function App() {
   const [input, setInput] = useState('');
@@ -134,6 +145,21 @@ export default function App() {
       setLoading(false);
     }
   };
+  const renderFormattedText = (text: string) => {
+    if (!text) return null;
+    // Split by ** delimiters and capture the groups
+    const parts = text.split(/(\*\*.*?\*\*)/g);
+    return parts.map((part, index) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return (
+          <Text key={index} style={{ fontWeight: 'bold' }}>
+            {part.slice(2, -2)}
+          </Text>
+        );
+      }
+      return part;
+    });
+  };
 
   return (
     <KeyboardAvoidingView
@@ -190,7 +216,7 @@ export default function App() {
               styles.messageText,
               msg.role === 'user' ? styles.userText : styles.aiText
             ]}>
-              {msg.content}
+              {renderFormattedText(msg.content)}
             </Text>
           </View>
         ))}

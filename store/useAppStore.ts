@@ -12,6 +12,9 @@ import {
 import { defaultSettings } from '../services/storageService';
 
 interface AppState {
+  // Auth
+  user: any | null;
+
   // Weather
   weather: WeatherData | null;
   forecast: ForecastItem[];
@@ -38,6 +41,8 @@ interface AppState {
   // App state
   isOffline: boolean;
   isInitialized: boolean;
+  isOnboardingComplete: boolean;
+  isTermsAgreed: boolean;
 
   // Actions — Weather
   setWeather: (weather: WeatherData) => void;
@@ -64,12 +69,17 @@ interface AppState {
   // Actions — Settings
   updateSettings: (settings: Partial<UserSettings>) => void;
 
+
   // Actions — App
   setOffline: (offline: boolean) => void;
   setInitialized: (initialized: boolean) => void;
+  setUser: (user: any | null) => void;
+  setOnboardingComplete: (complete: boolean) => void;
+  setTermsAgreed: (agreed: boolean) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
+  user: null,
   weather: null,
   forecast: [],
   isWeatherLoading: false,
@@ -90,6 +100,8 @@ export const useAppStore = create<AppState>((set) => ({
 
   isOffline: false,
   isInitialized: false,
+  isOnboardingComplete: false,
+  isTermsAgreed: false,
 
   // Weather actions
   setWeather: (weather) =>
@@ -129,4 +141,7 @@ export const useAppStore = create<AppState>((set) => ({
   // App actions
   setOffline: (isOffline) => set({ isOffline }),
   setInitialized: (isInitialized) => set({ isInitialized }),
+  setUser: (user) => set({ user }),
+  setOnboardingComplete: (isOnboardingComplete) => set({ isOnboardingComplete }),
+  setTermsAgreed: (isTermsAgreed) => set({ isTermsAgreed }),
 }));

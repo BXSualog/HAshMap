@@ -2,6 +2,7 @@
 import React from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
 import { BlurView } from 'expo-blur';
+import { useResponsive } from '../hooks/useResponsive';
 import { palette } from '../theme/colors';
 
 interface GlassCardProps {
@@ -19,9 +20,10 @@ export default function GlassCard({
   tint = 'dark',
   borderRadius = 20,
 }: GlassCardProps) {
+  const { spacing } = useResponsive();
   return (
     <BlurView intensity={intensity} tint={tint} style={[styles.blur, { borderRadius }, style]}>
-      <View style={[styles.overlay, { borderRadius }]}>
+      <View style={[styles.overlay, { borderRadius, padding: spacing.md }]}>
         {children}
       </View>
     </BlurView>
@@ -36,7 +38,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.07)',
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.15)',
-    padding: 16,
     width: '100%',
   },
 });

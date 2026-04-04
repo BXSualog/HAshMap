@@ -10,6 +10,7 @@ import {
 } from '../services/notificationService';
 import { generateId, formatDate, detectTyphoonSignal } from '../utils/typhoonSignals';
 import { TyphoonAlert, TyphoonSignal } from '../types';
+import { HEAT_INDEX_THRESHOLD } from '../utils/constants';
 
 export function useWeather() {
   const {
@@ -90,7 +91,7 @@ export function useWeather() {
         const previousHeatIndex = weather ? Math.max(weather.temperature, weather.feelsLike) : 0;
         const currentHeatIndex = Math.max(weatherData.temperature, weatherData.feelsLike);
         
-        if (previousHeatIndex < 25 && currentHeatIndex >= 25) {
+        if (previousHeatIndex < HEAT_INDEX_THRESHOLD && currentHeatIndex >= HEAT_INDEX_THRESHOLD) {
           const location = `${weatherData.city}, ${weatherData.country}`;
           await sendHeatAlertNotification(currentHeatIndex, location);
         }

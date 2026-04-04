@@ -2,7 +2,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { WeatherData } from '../types';
-import { fontSizes } from '../theme/typography';
+import { fontSizes, getResponsiveFontSize } from '../theme/typography';
+import { useResponsive } from '../hooks/useResponsive';
 import { palette } from '../theme/colors';
 import { formatWindSpeed } from '../utils/typhoonSignals';
 
@@ -24,6 +25,7 @@ const WEATHER_EMOJIS: Record<string, string> = {
 };
 
 export default function WeatherCard({ weather, isOffline }: WeatherCardProps) {
+  const { isLargeScreen, spacing } = useResponsive();
   const emoji = WEATHER_EMOJIS[weather.condition] || '🌤️';
 
   return (
@@ -40,30 +42,44 @@ export default function WeatherCard({ weather, isOffline }: WeatherCardProps) {
       </Text>
 
       {/* Main Temperature Display */}
-      <View style={styles.tempRow}>
-        <Text style={styles.emoji}>{emoji}</Text>
-        <Text style={styles.temperature}>{weather.temperature}°C</Text>
+      <View style={[styles.tempRow, isLargeScreen && { gap: 24 }]}>
+        <Text style={[styles.emoji, { fontSize: isLargeScreen ? 84 : 64 }]}>{emoji}</Text>
+        <Text style={[styles.temperature, { fontSize: isLargeScreen ? 120 : 96 }]}>{weather.temperature}°C</Text>
       </View>
 
       <Text style={styles.description}>{weather.description}</Text>
 
       {/* Stats Grid */}
-      <View style={styles.statsGrid}>
-        <StatBadge icon="💧" label="Humidity" value={`${weather.humidity}%`} />
-        <StatBadge icon="💨" label="Wind" value={formatWindSpeed(weather.windSpeed)} />
-        <StatBadge icon="🌡️" label="Feels Like" value={`${weather.feelsLike}°C`} />
-        <StatBadge icon="📊" label="Pressure" value={`${weather.pressure} hPa`} />
+      <View style={[styles.statsGrid, isLargeScreen && { gap: 16 }]}>
+        <StatBadge icon="💧" label="Humidity" value={`${weather.humidity}%`} isLarge={isLargeScreen} />
+        <StatBadge icon="💨" label="Wind" value={formatWindSpeed(weather.windSpeed)} isLarge={isLargeScreen} />
+        <StatBadge icon="🌡️" label="Feels Like" value={`${weather.feelsLike}°C`} isLarge={isLargeScreen} />
+        <StatBadge icon="📊" label="Pressure" value={`${weather.pressure} hPa`} isLarge={isLargeScreen} />
       </View>
     </View>
   );
 }
 
-function StatBadge({ icon, label, value }: { icon: string; label: string; value: string }) {
+function StatBadge({
+  icon,
+  label,
+  value,
+  isLarge,
+}: {
+  icon: string;
+  label: string;
+  value: string;
+  isLarge: boolean;
+}) {
   return (
-    <View style={styles.statBadge}>
-      <Text style={styles.statIcon}>{icon}</Text>
-      <Text style={styles.statValue}>{value}</Text>
-      <Text style={styles.statLabel}>{label}</Text>
+    <View style={[styles.statBadge, isLarge && { minWidth: '22%' }]}>
+      <Text style={[styles.statIcon, { fontSize: isLarge ? 24 : 20 }]}>{icon}</Text>
+      <Text style={[styles.statValue, { fontSize: getResponsiveFontSize('base', isLarge) }]}>
+        {value}
+      </Text>
+      <Text style={[styles.statLabel, { fontSize: getResponsiveFontSize('xs', isLarge) }]}>
+        {label}
+      </Text>
     </View>
   );
 }

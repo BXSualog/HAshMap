@@ -11,6 +11,7 @@ import {
   sendTyphoonAlertNotification,
   sendUpcomingTyphoonNotification
 } from '../../services/notificationService';
+import { HEAT_INDEX_THRESHOLD } from '../../utils/constants';
 
 export default function AlertsScreen() {
   const { alertHistory, currentSignal, activeAlert, setAlertHistory, weather } = useAppStore();
@@ -20,7 +21,7 @@ export default function AlertsScreen() {
     setAlertHistory([]);
   };
 
-  const isHeatAlertVisible = weather && (weather.temperature >= 35 || weather.feelsLike >= 38);
+  const isHeatAlertVisible = weather && (weather.temperature >= HEAT_INDEX_THRESHOLD || weather.feelsLike >= HEAT_INDEX_THRESHOLD);
   const isAnyAlertVisible = alertHistory.length > 0 || isHeatAlertVisible || currentSignal > 0;
 
   return (
@@ -41,7 +42,7 @@ export default function AlertsScreen() {
                   'Test Notifications',
                   'Select an alert type to verify device push behavior:',
                   [
-                    { text: 'Heat Alert (25°C+)', onPress: () => sendHeatAlertNotification(32, locationStr) },
+                    { text: `Heat Alert (${HEAT_INDEX_THRESHOLD}°C+)`, onPress: () => sendHeatAlertNotification(HEAT_INDEX_THRESHOLD + 1, locationStr) },
                     { text: 'Signal #1 (Active)', onPress: () => sendTyphoonAlertNotification(1, locationStr) },
                     { text: 'Signal #3 (Active)', onPress: () => sendTyphoonAlertNotification(3, locationStr) },
                     { text: 'Signal #2 (Upcoming)', onPress: () => sendUpcomingTyphoonNotification(2, locationStr, 'Tomorrow') },

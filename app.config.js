@@ -3,7 +3,7 @@ import 'dotenv/config';
 export default {
   expo: {
     name: 'Alisto:Go',
-    slug: 'alisto-go',
+    slug: 'alisto-go-app',
     version: '1.0.0',
     orientation: 'portrait',
     icon: './assets/icon.png',
@@ -27,8 +27,9 @@ export default {
     },
     android: {
       adaptiveIcon: {
-        foregroundImage: './assets/adaptive-icon.png',
-        backgroundColor: '#0a0e27',
+        foregroundImage: './assets/icon.png',
+        backgroundImage: './assets/android-icon-background.png',
+        backgroundColor: '#ffffff',
       },
       package: 'com.bxfiles.alistoai',
       permissions: [
@@ -71,8 +72,14 @@ export default {
     extra: {
       geminiApiKey: process.env.EXPO_PUBLIC_GEMINI_API_KEY || process.env.GEMINI_API_KEY,
       eas: {
-        projectId: '475a019f-577a-40ea-ac78-9475f1a4517b',
+        projectId: 'd2de439f-c9f4-44f2-9b0a-bd4b4dc2cf56',
       },
+    },
+    runtimeVersion: {
+      policy: 'appVersion',
+    },
+    updates: {
+      url: 'https://u.expo.dev/d2de439f-c9f4-44f2-9b0a-bd4b4dc2cf56',
     },
     scheme: 'alistogo',
   },
