@@ -1,9 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useRef } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator, Alert } from 'react-native';
 import Constants from 'expo-constants';
+import { fetchWeatherByCity, fetchForecast, fetchWeatherNews } from './services/weatherService';
+import { sendGeminiMessage } from './services/geminiService';
 
-// Polyfill AbortSignal.timeout for React Native environment
 const globalAny = global as any;
 if (!globalAny.AbortSignal) {
   globalAny.AbortSignal = function () { };
@@ -18,14 +19,12 @@ if (!globalAny.AbortSignal.timeout) {
 const getChatAPIKey = () => {
   const envKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
   const extraKey = Constants.expoConfig?.extra?.geminiApiKey;
-  const fallbackKey = "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";
-  // Check if key is a valid string and not literally "undefined"
+  const fallbackKey = "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";
   const isValid = (k: any) => k && typeof k === 'string' && k.startsWith('sk-or-v1-') && k.length > 32;
   if (isValid(envKey)) return envKey as string;
   if (isValid(extraKey)) return extraKey as string;
   return fallbackKey;
 };
-
 const GEMINI_API_KEY = getChatAPIKey();
 
 export default function App() {
@@ -43,100 +42,44 @@ export default function App() {
     setInput('');
     setLoading(true);
 
-    let promptAddition = '';
-    const weatherMatch = userMessage.match(/weather (?:in|for|at) ([\w\s]+)/i);
-
-    if (weatherMatch) {
-      const city = weatherMatch[1].trim();
-      try {
-        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`);
-        const geoData = await geoRes.json();
-
-        if (geoData.results && geoData.results.length > 0) {
-          const loc = geoData.results[0];
-          const lat = loc.latitude;
-          const lng = loc.longitude;
-          const cityName = loc.name;
-
-          // Step 2: Weather Forecast
-          const weatherRes = await fetch(
-            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=auto`
-          );
-          const weatherData = await weatherRes.json();
-
-          if (weatherData.current) {
-            const temp = Math.round(weatherData.current.temperature_2m);
-            const wCode = weatherData.current.weather_code;
-
-
-            let condition = 'Clear';
-            if (wCode >= 1 && wCode <= 3) condition = 'Cloudy';
-            if (wCode >= 45 && wCode <= 48) condition = 'Foggy';
-            if (wCode >= 51 && wCode <= 67) condition = 'Rainy';
-            if (wCode >= 71 && wCode <= 77) condition = 'Snowy';
-            if (wCode >= 95 && wCode <= 99) condition = 'Thunderstorms';
-
-            promptAddition = `\n[System Note: Open-Meteo API reports that the current weather in ${cityName} is ${temp}°C, ${condition}, Humidity: ${weatherData.current.relative_humidity_2m}%, Wind: ${weatherData.current.wind_speed_10m}km/h. Please incorporate this data smoothly into your response.]`;
-
-            // Maintain the same widget data structure as before to avoid UI breaks
-            setCurrentWeather({
-              name: cityName,
-              main: { temp: temp },
-              weather: [{ description: condition }]
-            });
-          } else {
-            setCurrentWeather(null);
-            setMessages(prev => [...prev, { role: 'ai', content: `⚠️ Open-Meteo returned successful response but no current weather data for ${cityName}.` }]);
-            setLoading(false); return;
-          }
-        } else {
-          setCurrentWeather(null);
-          setMessages(prev => [...prev, { role: 'ai', content: `⚠️ Could not locate the city "${city}" via Open-Meteo Geocoding.` }]);
-          setLoading(false); return;
-        }
-      } catch (e: any) {
-        setCurrentWeather(null);
-        setMessages(prev => [...prev, { role: 'ai', content: `⚠️ Network error reaching Open-Meteo API: ${e.message}` }]);
-        setLoading(false); return;
-      }
-    } else {
-      // optional: Clear weather widget when asking non-weather requests
-      setCurrentWeather(null);
-    }
-
     try {
-      const openRouterHistory = messages.map(msg => ({
-        role: msg.role === 'ai' ? 'assistant' : 'user',
-        content: msg.content
-      }));
+      let weatherContext = null;
+      let forecastContext = null;
+      let newsContext = null;
 
-      const fetchMessages = [
-        ...openRouterHistory,
-        { role: 'user', content: userMessage + promptAddition }
-      ];
+      const weatherMatch = userMessage.match(/weather (?:in|for|at) ([\w\s]+)/i);
+      const needsNews = userMessage.toLowerCase().includes('news') || userMessage.toLowerCase().includes('update');
 
-      const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${GEMINI_API_KEY}`,
-          'HTTP-Referer': 'https://alistogo.com',
-          'X-Title': 'Alisto:Go',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: 'google/gemini-2.5-flash',
-          messages: fetchMessages,
-          temperature: 0.7,
-        })
-      });
+      if (weatherMatch) {
+        const city = weatherMatch[1].trim();
+        try {
+          // Fetch Current Weather
+          weatherContext = await fetchWeatherByCity(city);
+          setCurrentWeather({
+            name: weatherContext.city,
+            main: { temp: weatherContext.temperature },
+            weather: [{ description: weatherContext.description }]
+          });
 
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || `API Error: ${res.status}`);
+          // Fetch Forecast for Prediction
+          forecastContext = await fetchForecast(weatherContext.lat!, weatherContext.lon!);
+        } catch (e: any) {
+          console.warn('Weather fetch failed:', e.message);
+        }
       }
 
-      const data = await res.json();
-      const aiText = data.choices?.[0]?.message?.content || "No response generated.";
+      if (needsNews) {
+        newsContext = await fetchWeatherNews();
+      }
+
+      const aiText = await sendGeminiMessage(
+        userMessage,
+        weatherContext,
+        null,
+        messages.map(m => ({ role: m.role === 'ai' ? 'model' : 'user', parts: [{ text: m.content }] })),
+        forecastContext,
+        newsContext
+      );
 
       setMessages(prev => [...prev, { role: 'ai', content: aiText }]);
     } catch (error: any) {

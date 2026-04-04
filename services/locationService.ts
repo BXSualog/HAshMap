@@ -1,4 +1,3 @@
-// services/locationService.ts
 import * as Location from 'expo-location';
 import { LocationData } from '../types';
 import { getCachedLocation, cacheLocation } from './storageService';

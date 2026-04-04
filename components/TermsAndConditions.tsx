@@ -31,7 +31,7 @@ export default function TermsAndConditions({ onAccept }: TermsProps) {
             <Text style={styles.sectionTitle}>Location Disclosure</Text>
           </View>
           <Text style={styles.sectionText}>
-            Alisto:Go collects and uses your location data to provide real-time, localized typhoon alerts, heat index monitoring, and accurate weather forecasts. This data is used even when the app is in the background to ensure you receive critical safety notifications in a timely manner.
+            Alisto:Go collects and uses your location data to provide real-time, localized typhoon alerts, heat index monitoring, and accurate weather forecasts. This data is used even when the app is in the background to ensure you receive safety notifications in a timely manner.
           </Text>
         </View>
 

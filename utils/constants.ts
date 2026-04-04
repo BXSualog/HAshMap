@@ -89,9 +89,33 @@ export const TYPHOON_SIGNAL_INFO: Record<TyphoonSignal, {
   },
 };
 
-export const EMERGENCY_NUMBERS = [
-  { name: 'NDRRMC Hotline', number: '911' },
-  { name: 'Red Cross Philippines', number: '143' },
-  { name: 'PAGASA', number: '+63 2 8284 0800' },
-  { name: 'Philippine Coast Guard', number: '5100' },
+export const PROVINCIAL_HOTLINE = [
+  { name: 'ILOILO PDRRMO OPCEN', number: '0920-946-8233' },
+  { name: 'ILOILO PDRRMO Landline', number: '(033) 328-79-20' },
+  { name: 'Bureau of Fire Protection -ILOILO Province', number: '0928-306-3403' },
+  { name: 'ILOILO Police Provincial Office (Security Assistance)', number: '0998-598-6190' },
+];
+
+export const HOSPITALS = [
+  { name: 'WVMC (Provincial)', number: '(033) 339 7070' },
+  { name: 'WVSUMC (Don Benito)', number: '(033) 320 2431' },
+  { name: 'St. Paul\'s Hospital', number: '(033) 337 2741' },
+  { name: 'Iloilo Doctor\'s Hospital', number: '(033) 337 7702' },
+  { name: 'Metro Iloilo Hospital', number: '(033) 327 1527' },
+  { name: 'Healthway Qualimed', number: '(033) 500 4000' },
+  { name: 'The Medical City', number: '(033) 339 7340' },
+  { name: 'Iloilo Mission Hospital', number: '(033) 320 0315' },
+  { name: 'Asia Pacific Medical Center', number: '(033) 339 9991' },
+  { name: 'Medicus Medical Center', number: '(033) 328 7777' },
+];
+
+export const ILOILO_CITY_HOTLINE = [
+  { name: 'CDRRMO ICER/USAR', number: '0919-066-1554' },
+  { name: 'Iloilo City OP-Cen', number: '0919-066-2333' },
+  { name: 'BFP Search & Rescue', number: '0966-052-0061' },
+  { name: 'ICPO (Police)', number: '0998-598-6241' },
+  { name: 'Red Cross Iloilo', number: '0917-117-0066' },
+  { name: 'FEDFIRE', number: '(033) 337-9760' },
+  { name: 'ICAG', number: '(033) 337-5931' },
+  { name: 'ICTTMO (Traffic Control)', number: '(033) 339-1127' },
 ];

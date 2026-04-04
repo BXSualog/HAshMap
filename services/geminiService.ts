@@ -1,8 +1,6 @@
-// services/geminiService.ts
-import { WeatherData, TyphoonAlert } from '../types';
+import { WeatherData, TyphoonAlert, ForecastItem } from '../types';
 import axios from 'axios';
 
-// Polyfill AbortSignal.timeout for React Native environment
 const globalAny = global as any;
 if (!globalAny.AbortSignal) {
   globalAny.AbortSignal = function () { };
@@ -14,13 +12,18 @@ if (!globalAny.AbortSignal.timeout) {
   };
 }
 
-// Key is set directly to avoid Metro's "undefined" string inlining issue with process.env
+import Constants from 'expo-constants';
+
 const getAPIKey = () => {
+  const extraKey = Constants.expoConfig?.extra?.geminiApiKey;
   const envKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
-  const fallbackKey = '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';
-  // Check if key is a valid string and not literally "undefined"
+  const fallbackKey = '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';
+
   const isValid = (k: any) => k && typeof k === 'string' && k.startsWith('sk-or-v1-') && k.length > 32;
-  return isValid(envKey) ? envKey as string : fallbackKey;
+
+  if (isValid(extraKey)) return extraKey as string;
+  if (isValid(envKey)) return envKey as string;
+  return fallbackKey;
 };
 
 const OPENROUTER_API_KEY = getAPIKey();
@@ -49,12 +52,34 @@ function buildWeatherContext(weather: WeatherData | null, alert: TyphoonAlert | 
   return context;
 }
 
-const SYSTEM_PROMPT = `You are Alisto:Go AI, a weather assistant specialized in Philippine typhoons and weather safety. 
-You provide accurate, concise, and safety-focused information.
-Always respond in a calm, reassuring tone while being direct about dangers.
-If asked about specific locations or tracking, you can provide coordinates in (lat, lon) format, and I will automatically translate them for the user.
-Keep responses under 150 words unless more detail is genuinely needed.
-If a typhoon signal is active, always remind users to follow official government advisories.`;
+function buildForecastAndMediaContext(forecast: ForecastItem[] | null, news: string | null): string {
+  let context = '';
+
+  if (forecast && forecast.length > 0) {
+    context += '\n\nNEXT 5 DAYS FORECAST:';
+    forecast.forEach(day => {
+      const date = new Date(day.timestamp * 1000).toLocaleDateString('en-PH', { weekday: 'short', month: 'short', day: 'numeric' });
+      context += `\n- ${date}: ${day.temperature}°C, ${day.description}${day.rainVolume ? `, Rain: ${day.rainVolume}mm` : ''}`;
+    });
+  }
+
+  if (news && news.trim()) {
+    context += `\n\nLATEST MEDIA UPDATES / WEATHER ADVISORIES:\n${news}`;
+  }
+
+  return context;
+}
+
+const SYSTEM_PROMPT = `You are Alisto:Go AI, a weather commander specialized in Philippine weather safety.
+You have access to real-time scientific data (WEATHER_DATA), future trends (FORECAST), and news reports (MEDIA).
+Your goal is to "Predict" potential hazards and provide "Alisto" (ready/alert) guidance.
+
+GUIDELINES:
+1. PREDICTION: Use the trend in the 5-day forecast to warn users about upcoming changes (e.g., "It's sunny now, but forecast shows heavy rain starting Wednesday").
+2. MEDIA: Incorporate latest bulletins when provided to add ground-level context.
+3. ALISTO ADVICE: Be proactive. If rain is expected, suggest checking drainage; if heat is expected, suggest hydration.
+4. TONE: Be calm, direct, and authoritative in safety-critical situations.
+5. LENGTH: Keep responses under 200 words. Stick to facts.`;
 
 export interface ChatMessage {
   role: 'user' | 'model';
@@ -65,12 +90,14 @@ export async function sendGeminiMessage(
   userMessage: string,
   weather: WeatherData | null,
   alert: TyphoonAlert | null,
-  history: ChatMessage[] = []
+  history: ChatMessage[] = [],
+  forecast: ForecastItem[] | null = null,
+  news: string | null = null
 ): Promise<string> {
   const weatherContext = buildWeatherContext(weather, alert);
-  const systemInst = `${SYSTEM_PROMPT}\n\nREAL-TIME WEATHER DATA:\n${weatherContext}`;
+  const extraContext = buildForecastAndMediaContext(forecast, news);
+  const systemInst = `${SYSTEM_PROMPT}\n\nSITUATIONAL REPORT:\n${weatherContext}${extraContext}`;
 
-  // Transform Gemini history format to OpenRouter format
   const openRouterHistory = history.slice(-10).map(msg => ({
     role: msg.role === 'model' ? 'assistant' : 'user',
     content: msg.parts[0].text

@@ -1,10 +1,9 @@
-// services/weatherService.ts — Open-Meteo (no API key required)
 import { WeatherData, ForecastItem, WeatherCondition } from '../types';
 
 const GEO_BASE = 'https://geocoding-api.open-meteo.com/v1';
 const FORECAST_BASE = 'https://api.open-meteo.com/v1/forecast';
 
-// ─── WMO weather code → WeatherCondition ─────────────────────────────────────
+
 function mapWMOCode(code: number): WeatherCondition {
   if (code === 0) return 'clear';
   if (code >= 1 && code <= 3) return 'clouds';
@@ -30,7 +29,6 @@ function wmoDescription(code: number): string {
   return 'Unknown';
 }
 
-// ─── Current weather ──────────────────────────────────────────────────────────
 export async function fetchCurrentWeather(lat: number, lon: number): Promise<WeatherData> {
   const url =
     `${FORECAST_BASE}?latitude=${lat}&longitude=${lon}` +
@@ -44,11 +42,10 @@ export async function fetchCurrentWeather(lat: number, lon: number): Promise<Wea
 
   const c = data.current;
   const wCode: number = c.weather_code ?? 0;
-  // wind_speed_10m from Open-Meteo is in km/h — convert to m/s for existing signal logic
   const windSpeedMs = (c.wind_speed_10m ?? 0) / 3.6;
 
   return {
-    city: `${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E`, // placeholder until reverse-geo
+    city: `${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E`,
     country: '',
     temperature: Math.round(c.temperature_2m ?? 0),
     feelsLike: Math.round(c.apparent_temperature ?? c.temperature_2m ?? 0),
@@ -67,7 +64,7 @@ export async function fetchCurrentWeather(lat: number, lon: number): Promise<Wea
   };
 }
 
-// ─── 5-day forecast ───────────────────────────────────────────────────────────
+
 export async function fetchForecast(lat: number, lon: number): Promise<ForecastItem[]> {
   const url =
     `${FORECAST_BASE}?latitude=${lat}&longitude=${lon}` +
@@ -84,14 +81,13 @@ export async function fetchForecast(lat: number, lon: number): Promise<ForecastI
     temperature: Math.round(((daily.temperature_2m_max[i] ?? 0) + (daily.temperature_2m_min[i] ?? 0)) / 2),
     condition: mapWMOCode(daily.weather_code[i] ?? 0),
     description: wmoDescription(daily.weather_code[i] ?? 0),
-    windSpeed: (daily.wind_speed_10m_max[i] ?? 0) / 3.6, // convert km/h → m/s
+    windSpeed: (daily.wind_speed_10m_max[i] ?? 0) / 3.6,
     rainVolume: daily.precipitation_sum[i] ?? undefined,
   }));
 
   return days;
 }
 
-// ─── Search by city name (geocoding → weather) ────────────────────────────────
 export async function fetchWeatherByCity(city: string): Promise<WeatherData> {
   const geoRes = await fetch(
     `${GEO_BASE}/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`
@@ -105,4 +101,28 @@ export async function fetchWeatherByCity(city: string): Promise<WeatherData> {
   const weather = await fetchCurrentWeather(lat, lon);
 
   return { ...weather, city: name, country: country_code ?? '' };
+}
+
+
+export async function fetchWeatherNews(): Promise<string> {
+
+  const rssUrl = encodeURIComponent('https://www.pagasa.dost.gov.ph/index.php/general-weather/bulletin/rss');
+  const url = `https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`;
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return 'No recent media updates available.';
+    const data = await res.json();
+
+    if (data.items && data.items.length > 0) {
+      // Return the top 3 headlines/snippets
+      return data.items.slice(0, 3).map((item: any) =>
+        `- ${item.title}: ${item.description.replace(/<[^>]*>/g, '').substring(0, 150)}...`
+      ).join('\n');
+    }
+    return 'No recent media reports found.';
+  } catch (err) {
+    console.error('Fetch News Error:', err);
+    return 'Media updates currently unavailable.';
+  }
 }

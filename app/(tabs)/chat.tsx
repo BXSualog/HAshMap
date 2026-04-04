@@ -8,6 +8,12 @@ import {
   Platform,
   Pressable,
 } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useGemini } from '../../hooks/useGemini';
 import { useAppStore } from '../../store/useAppStore';
@@ -28,6 +34,54 @@ export default function ChatScreen() {
   const { chatHistory, isChatLoading, sendMessage, clearChat } = useGemini();
   const { weather, activeAlert } = useAppStore();
   const flatListRef = useRef<FlatList>(null);
+
+  // Zoom & Pan Gesture State
+  const scale = useSharedValue(1);
+  const savedScale = useSharedValue(1);
+  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
+  const savedTranslateX = useSharedValue(0);
+  const savedTranslateY = useSharedValue(0);
+
+  const pinchGesture = Gesture.Pinch()
+    .onUpdate((e) => {
+      const newScale = savedScale.value * e.scale;
+      scale.value = Math.min(Math.max(newScale, 0.5), 3.0);
+    })
+    .onEnd(() => {
+      savedScale.value = scale.value;
+    });
+
+  const panGesture = Gesture.Pan()
+    .onUpdate((e) => {
+      translateX.value = savedTranslateX.value + e.translationX;
+      translateY.value = savedTranslateY.value + e.translationY;
+    })
+    .onEnd(() => {
+      savedTranslateX.value = translateX.value;
+      savedTranslateY.value = translateY.value;
+    });
+
+  const doubleTapGesture = Gesture.Tap()
+    .numberOfTaps(2)
+    .onEnd(() => {
+      scale.value = withSpring(1);
+      savedScale.value = 1;
+      translateX.value = withSpring(0);
+      translateY.value = withSpring(0);
+      savedTranslateX.value = 0;
+      savedTranslateY.value = 0;
+    });
+
+  const combinedGesture = Gesture.Simultaneous(pinchGesture, panGesture, doubleTapGesture);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { scale: scale.value },
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+    ],
+  }));
 
   useEffect(() => {
     if (chatHistory.length > 0) {
@@ -86,31 +140,35 @@ export default function ChatScreen() {
           )}
 
           {/* Chat List */}
-          <FlatList
-            style={{ flex: 1 }}
-            ref={flatListRef}
-            data={chatHistory}
-            keyExtractor={(item) => item.id}
-            renderItem={renderItem}
-            contentContainerStyle={styles.chatContent}
-            showsVerticalScrollIndicator={false}
-            ListEmptyComponent={
-              <View style={styles.emptyChat}>
-                <Text style={styles.emptyChatText}>Ask about the weather!</Text>
-                <View style={styles.quickPrompts}>
-                  {QUICK_PROMPTS.map((prompt) => (
-                    <Pressable
-                      key={prompt}
-                      style={styles.quickBtn}
-                      onPress={() => sendMessage(prompt)}
-                    >
-                      <Text style={styles.quickBtnText}>{prompt}</Text>
-                    </Pressable>
-                  ))}
-                </View>
-              </View>
-            }
-          />
+          <GestureDetector gesture={combinedGesture}>
+            <Animated.View style={[{ flex: 1, overflow: 'hidden' }, animatedStyle]}>
+              <FlatList
+                style={{ flex: 1 }}
+                ref={flatListRef}
+                data={chatHistory}
+                keyExtractor={(item) => item.id}
+                renderItem={renderItem}
+                contentContainerStyle={styles.chatContent}
+                showsVerticalScrollIndicator={false}
+                ListEmptyComponent={
+                  <View style={styles.emptyChat}>
+                    <Text style={styles.emptyChatText}>Ask about the weather!</Text>
+                    <View style={styles.quickPrompts}>
+                      {QUICK_PROMPTS.map((prompt) => (
+                        <Pressable
+                          key={prompt}
+                          style={styles.quickBtn}
+                          onPress={() => sendMessage(prompt)}
+                        >
+                          <Text style={styles.quickBtnText}>{prompt}</Text>
+                        </Pressable>
+                      ))}
+                    </View>
+                  </View>
+                }
+              />
+            </Animated.View>
+          </GestureDetector>
 
           {/* Input */}
           <ChatInput onSend={sendMessage} isLoading={isChatLoading} />
@@ -146,12 +204,12 @@ const styles = StyleSheet.create({
   alertChip: {
     backgroundColor: 'rgba(239,68,68,0.12)',
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(239,68,68,0.2)',
+    borderBottomColor: 'rgba(255, 140, 0, 1)',
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
   alertChipText: {
-    color: '#ef4444',
+    color: '#000000ff',
     fontSize: fontSizes.xs,
     fontWeight: '600',
   },

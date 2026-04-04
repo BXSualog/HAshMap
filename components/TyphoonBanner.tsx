@@ -1,4 +1,3 @@
-// components/TyphoonBanner.tsx
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated, Pressable, Linking } from 'react-native';
 import { TyphoonAlert, TyphoonSignal } from '../types';

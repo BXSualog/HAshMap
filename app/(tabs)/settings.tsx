@@ -15,7 +15,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { saveSettings } from '../../services/storageService';
 import { fontSizes } from '../../theme/typography';
 import { signalColors } from '../../theme/colors';
-import { EMERGENCY_NUMBERS } from '../../utils/constants';
+import { PROVINCIAL_HOTLINE, HOSPITALS, ILOILO_CITY_HOTLINE } from '../../utils/constants';
 import { TyphoonSignal } from '../../types';
 import { auth, signOut } from 'alisto-login';
 
@@ -129,12 +129,53 @@ export default function SettingsScreen() {
             />
           </View>
 
-          {/* Emergency Contacts */}
+
+          {/* City Hotlines */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Emergency Numbers</Text>
-            {EMERGENCY_NUMBERS.map((contact) => (
-              <Pressable key={contact.number} onPress={() => callNumber(contact.number)} style={styles.contactRow}>
-                <View>
+            <Text style={styles.sectionTitle}>Iloilo City Hotlines</Text>
+            {ILOILO_CITY_HOTLINE.map((contact) => (
+              <Pressable
+                key={`${contact.name}-${contact.number}`}
+                onPress={() => callNumber(contact.number)}
+                style={({ pressed }) => [styles.contactRow, pressed && { opacity: 0.6 }]}
+              >
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.contactName}>{contact.name}</Text>
+                  <Text style={styles.contactNumber}>{contact.number}</Text>
+                </View>
+                <Text style={styles.callIcon}>📞</Text>
+              </Pressable>
+            ))}
+          </View>
+
+          {/* Provincial Hotlines */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Iloilo Provincial Hotlines</Text>
+            {PROVINCIAL_HOTLINE.map((contact) => (
+              <Pressable
+                key={`${contact.name}-${contact.number}`}
+                onPress={() => callNumber(contact.number)}
+                style={({ pressed }) => [styles.contactRow, pressed && { opacity: 0.6 }]}
+              >
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.contactName}>{contact.name}</Text>
+                  <Text style={styles.contactNumber}>{contact.number}</Text>
+                </View>
+                <Text style={styles.callIcon}>📞</Text>
+              </Pressable>
+            ))}
+          </View>
+
+          {/* Hospitals */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Hospitals</Text>
+            {HOSPITALS.map((contact) => (
+              <Pressable
+                key={`${contact.name}-${contact.number}`}
+                onPress={() => callNumber(contact.number)}
+                style={({ pressed }) => [styles.contactRow, pressed && { opacity: 0.6 }]}
+              >
+                <View style={{ flex: 1 }}>
                   <Text style={styles.contactName}>{contact.name}</Text>
                   <Text style={styles.contactNumber}>{contact.number}</Text>
                 </View>

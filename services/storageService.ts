@@ -1,4 +1,3 @@
-// services/storageService.ts
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { WeatherData, TyphoonAlert, LocationData, UserSettings } from '../types';
 
@@ -19,7 +18,6 @@ export const defaultSettings: UserSettings = {
   language: 'en',
 };
 
-// ── Weather ──────────────────────────────────────────────
 export async function cacheWeatherData(data: WeatherData): Promise<void> {
   await AsyncStorage.setItem(KEYS.WEATHER, JSON.stringify(data));
 }
@@ -29,11 +27,10 @@ export async function getCachedWeather(): Promise<WeatherData | null> {
   return raw ? JSON.parse(raw) : null;
 }
 
-// ── Alerts ───────────────────────────────────────────────
 export async function saveAlertHistory(alert: TyphoonAlert): Promise<void> {
   const history = await getAlertHistory();
-  history.unshift(alert); // newest first
-  const trimmed = history.slice(0, 50); // keep last 50
+  history.unshift(alert);
+  const trimmed = history.slice(0, 50);
   await AsyncStorage.setItem(KEYS.ALERTS, JSON.stringify(trimmed));
 }
 
@@ -46,7 +43,6 @@ export async function clearAlertHistory(): Promise<void> {
   await AsyncStorage.removeItem(KEYS.ALERTS);
 }
 
-// ── Location ─────────────────────────────────────────────
 export async function cacheLocation(data: LocationData): Promise<void> {
   await AsyncStorage.setItem(KEYS.LOCATION, JSON.stringify(data));
 }
@@ -56,7 +52,6 @@ export async function getCachedLocation(): Promise<LocationData | null> {
   return raw ? JSON.parse(raw) : null;
 }
 
-// ── Settings ─────────────────────────────────────────────
 export async function saveSettings(settings: UserSettings): Promise<void> {
   await AsyncStorage.setItem(KEYS.SETTINGS, JSON.stringify(settings));
 }
@@ -66,7 +61,6 @@ export async function getSettings(): Promise<UserSettings> {
   return raw ? { ...defaultSettings, ...JSON.parse(raw) } : defaultSettings;
 }
 
-// ── Notification Tracking ──────────────────────────────
 export async function getLastNotifTime(type: string): Promise<number> {
   const raw = await AsyncStorage.getItem(`${KEYS.NOTIF_TRACKER}_${type}`);
   return raw ? parseInt(raw, 10) : 0;

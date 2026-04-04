@@ -141,6 +141,13 @@ const AlistoLogin = () => {
                   </TouchableOpacity>
                 </View>
               </View>
+              
+              <TouchableOpacity
+                onPress={() => router.push('/forgot-password')}
+                style={styles.forgotPasswordContainer}
+              >
+                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+              </TouchableOpacity>
 
               <TouchableOpacity
                 style={styles.rememberMeContainer}
@@ -318,6 +325,15 @@ const styles = StyleSheet.create({
   rememberMeText: {
     color: '#7a8494',
     fontSize: 13,
+  },
+  forgotPasswordContainer: {
+    alignSelf: 'flex-end',
+    marginTop: -8,
+  },
+  forgotPasswordText: {
+    color: '#e8650a',
+    fontSize: 12,
+    fontWeight: '600',
   },
   button: {
     backgroundColor: '#e8650a',
